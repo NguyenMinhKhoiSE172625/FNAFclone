@@ -1,0 +1,939 @@
+/* ==========================================================
+   FNAF Web Night Shift — Stylesheet (FNAF 1 Authentic)
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   1. RESET & BASE
+   ---------------------------------------------------------- */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    user-select: none;
+}
+
+/* ----------------------------------------------------------
+   2. FULLSCREEN ATMOSPHERE OVERLAYS
+   These only appear over the office view. Camera has its own.
+   ---------------------------------------------------------- */
+#vignette {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,.85) 85%);
+    pointer-events: none;
+    z-index: 40;
+}
+
+#static-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.05"/%3E%3C/svg%3E');
+    pointer-events: none;
+    z-index: 41;
+    opacity: .3;
+}
+
+/* Power-out heavy static */
+#static-overlay.heavy-static {
+    opacity: .8;
+    animation: flicker .1s infinite;
+    z-index: 999;
+    background-color: #111;
+}
+
+@keyframes flicker {
+    0%   { opacity: .8; }
+    50%  { opacity: .4; }
+    100% { opacity: .9; }
+}
+
+/* ----------------------------------------------------------
+   3. START SCREEN
+   ---------------------------------------------------------- */
+#start-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#start-screen h1 {
+    font-size: 50px;
+    color: #a00;
+    text-shadow: 0 0 10px red;
+    margin-bottom: 0;
+}
+
+#start-night-display {
+    font-size: 24px;
+    color: #aaa;
+    margin-bottom: 30px;
+}
+
+/* ----------------------------------------------------------
+   4. INSTRUCTION SCREEN
+   ---------------------------------------------------------- */
+#instruction-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 150;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 18px;
+    line-height: 1.5;
+    background-image: radial-gradient(circle at center, #111 0, #000 100%);
+}
+
+.inst-box {
+    border: 2px solid #444;
+    padding: 40px;
+    background: rgba(10,10,10,.9);
+    max-width: 650px;
+    text-align: left;
+    box-shadow: 0 0 30px #000;
+    border-radius: 5px;
+}
+
+.inst-box h2 {
+    color: #a00;
+    text-align: center;
+    font-size: 36px;
+    margin-top: 0;
+    text-shadow: 0 0 5px red;
+    letter-spacing: 2px;
+}
+
+.inst-box ul {
+    list-style-type: square;
+    color: #ddd;
+    padding-left: 20px;
+}
+
+.inst-box li {
+    margin-bottom: 15px;
+}
+
+.inst-highlight {
+    color: #ff5555;
+    font-weight: bold;
+}
+
+/* ----------------------------------------------------------
+   5. MENU BUTTONS
+   ---------------------------------------------------------- */
+.menu-btn {
+    background: transparent;
+    border: 2px solid #555;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 20px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: .2s;
+    margin: 10px;
+    width: 250px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.menu-btn:hover {
+    background: #fff;
+    color: #000;
+    font-weight: 700;
+}
+
+/* ----------------------------------------------------------
+   6. HUD (heads-up display)
+   ---------------------------------------------------------- */
+#hud {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.hud-top-right {
+    position: absolute;
+    top: 20px; right: 30px;
+    text-align: right;
+    font-size: 24px;
+    text-shadow: 2px 2px 0 #000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.hud-bottom-left {
+    position: absolute;
+    bottom: 30px; left: 30px;
+    font-size: 20px;
+    text-shadow: 2px 2px 0 #000;
+    background: rgba(0,0,0,.5);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#cam-toggle {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 40px;
+    background: rgba(255,255,255,.1);
+    border: 2px solid #555;
+    border-bottom: none;
+    color: #aaa;
+    cursor: pointer;
+    pointer-events: auto;
+    font-family: inherit;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: .2s;
+    z-index: 101;
+}
+
+#cam-toggle:hover {
+    background: rgba(255,255,255,.3);
+    color: #fff;
+    height: 45px;
+}
+
+/* ----------------------------------------------------------
+   7. VOLUME CONTROL
+   ---------------------------------------------------------- */
+#volume-control {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.6);
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-top: 10px;
+    border: 1px solid #333;
+    transition: 0.3s;
+}
+
+#volume-icon {
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 5px;
+    text-shadow: 0 0 5px #fff;
+}
+
+#volume-slider {
+    width: 0;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5px;
+    background: #333;
+    outline: none;
+    border-radius: 5px;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px; height: 15px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 5px #fff;
+}
+
+#volume-slider::-moz-range-thumb {
+    width: 15px; height: 15px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 5px #fff;
+}
+
+#volume-control:hover #volume-slider {
+    width: 100px;
+    opacity: 1;
+    margin-left: 5px;
+}
+
+#volume-control:hover {
+    border-color: #777;
+}
+
+/* ----------------------------------------------------------
+   8. VIEWPORT & OFFICE
+   ---------------------------------------------------------- */
+#viewport {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow: hidden;
+}
+
+#office {
+    position: absolute;
+    top: 0; left: 0;
+    width: 160vw; height: 100%;
+    background: linear-gradient(to right, #050505, #151515, #151515, #050505);
+    transition: transform .1s ease-out;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ----------------------------------------------------------
+   9. OFFICE DECORATIONS
+   ---------------------------------------------------------- */
+.wall-texture {
+    position: absolute;
+    width: 100%; height: 80%;
+    top: 0;
+    background-image: repeating-linear-gradient(45deg, rgba(0,0,0,.2) 0, rgba(0,0,0,.2) 2px, transparent 2px, transparent 4px);
+    pointer-events: none;
+    opacity: .3;
+}
+
+.floor {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 20%;
+    background: repeating-linear-gradient(45deg, #151515, #151515 30px, #0a0a0a 30px, #0a0a0a 60px);
+    z-index: 0;
+    border-top: 5px solid #000;
+}
+
+.desk {
+    position: absolute;
+    bottom: -10%; left: 30vw;
+    width: 100vw; height: 40%;
+    background: #221510;
+    border-top: 15px solid #110906;
+    box-shadow: 0 -20px 50px rgba(0,0,0,.9);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    z-index: 2;
+}
+
+.fan {
+    font-size: 60px;
+    margin-right: 50px;
+    animation: spin .15s linear infinite;
+    filter: brightness(.6);
+}
+
+.desk-monitor {
+    width: 120px; height: 90px;
+    background: #0a0a0a;
+    border: 5px solid #222;
+    border-radius: 5px;
+    box-shadow: inset 0 0 15px #000;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* ----------------------------------------------------------
+   10. HALLWAYS & DOORS
+   In FNAF 1, hallways are PITCH BLACK by default.
+   Only the door light reveals what's there.
+   ---------------------------------------------------------- */
+.hallway {
+    width: 25vw; height: 100%;
+    background: #020202;
+    position: relative;
+    border-left: 10px solid #0a0a0a;
+    border-right: 10px solid #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.door {
+    position: absolute;
+    top: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, #333, #333 10px, #1a1a1a 10px, #1a1a1a 20px);
+    transform: translateY(-100%);
+    transition: transform .3s ease;
+    border-bottom: 15px solid #444;
+    box-shadow: inset 0 -10px 20px rgba(0,0,0,.8);
+    z-index: 3;
+}
+
+.door.closed {
+    transform: translateY(0);
+}
+
+/* ----------------------------------------------------------
+   11. DOOR LIGHT OVERLAYS
+   FNAF 1: harsh yellowish light that suddenly reveals hallway
+   ---------------------------------------------------------- */
+.light-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center 30%, rgba(220,210,160,.6) 0%, rgba(180,170,120,.35) 40%, rgba(0,0,0,.9) 85%);
+    opacity: 0;
+    transition: opacity 0.05s;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.light-overlay.active {
+    opacity: 1;
+}
+
+/* ----------------------------------------------------------
+   12. ANIMATRONICS AT DOORS
+   FNAF 1: completely invisible in the dark, only visible
+   when the player uses the door light to check.
+   ---------------------------------------------------------- */
+.animatronic-door {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    max-height: 95%;
+    object-fit: contain;
+    opacity: 0;
+    z-index: 2;
+    filter: brightness(0) contrast(1.2);
+    transition: opacity 0.05s, filter 0.05s;
+    pointer-events: none;
+    font-size: 100px;
+    text-align: center;
+}
+
+/* Animatronic is at the door — but still invisible without light */
+.animatronic-door.is-here {
+    opacity: 1;
+}
+
+/* Light on + animatronic present → fully revealed, harsh light */
+.light-overlay.active ~ .animatronic-door.is-here {
+    filter: brightness(1) contrast(1.1) saturate(0.8);
+}
+
+/* Door closed → animatronic hidden */
+.door.closed ~ .animatronic-door {
+    opacity: 0;
+}
+
+/* Freddy power-out: eyes glowing in darkness */
+.animatronic-door.freddy-powerout {
+    opacity: 1;
+    filter: brightness(0);
+    font-size: 120px;
+}
+
+.animatronic-door.freddy-powerout.eyes-visible {
+    filter: brightness(0.05);
+    text-shadow: 0 0 8px rgba(255,255,255,0.3), 0 0 30px rgba(100,100,255,0.15);
+}
+
+@keyframes freddy-eyes-blink {
+    0%, 40%  { filter: brightness(0.05); text-shadow: 0 0 8px rgba(255,255,255,0.3), 0 0 30px rgba(100,100,255,0.15); }
+    41%, 100% { filter: brightness(0); text-shadow: none; }
+}
+
+.animatronic-door.freddy-powerout.eyes-flicker {
+    animation: freddy-eyes-blink 2s steps(1) infinite;
+}
+
+/* ----------------------------------------------------------
+   13. RIGHT WINDOW (Chica peek window)
+   ---------------------------------------------------------- */
+#right-window {
+    position: absolute;
+    top: 20%; right: 32vw;
+    width: 100px; height: 150px;
+    background: #020202;
+    border: 5px solid #222;
+    z-index: 1;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px #000;
+}
+
+#window-character {
+    font-size: 80px;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    filter: brightness(0);
+    transition: opacity 0.05s, filter 0.05s;
+}
+
+#window-character.visible {
+    opacity: 1;
+    filter: brightness(1) saturate(0.8);
+}
+
+/* ----------------------------------------------------------
+   14. CONTROL PANELS
+   ---------------------------------------------------------- */
+.control-panel {
+    position: absolute;
+    top: 50%;
+    width: 70px; height: 140px;
+    background: linear-gradient(to bottom, #333, #111);
+    border: 2px solid #000;
+    border-radius: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    pointer-events: auto;
+    z-index: 5;
+    box-shadow: 5px 5px 15px rgba(0,0,0,.9);
+}
+
+.left-panel  { left: 26vw; }
+.right-panel { right: 26vw; }
+
+.btn {
+    width: 45px; height: 45px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 3px solid #000;
+    transition: .1s;
+}
+
+.btn-door          { background: #6a0000; }
+.btn-door.active   { background: #ff3333; box-shadow: 0 0 15px #f00; }
+.btn-light         { background: #776600; }
+.btn-light.active  { background: #ffff66; box-shadow: 0 0 15px #ff0; }
+
+/* ----------------------------------------------------------
+   15. GOLDEN FREDDY
+   ---------------------------------------------------------- */
+#golden-freddy-office {
+    position: absolute;
+    bottom: 5%; left: 45%;
+    font-size: 150px;
+    display: none;
+    filter: sepia(1) hue-rotate(15deg) saturate(3) drop-shadow(0 0 20px rgba(255,215,0,.5));
+    z-index: 3;
+}
+
+/* ----------------------------------------------------------
+   16. CAMERA SYSTEM (Monitor)
+   ---------------------------------------------------------- */
+#camera-system {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 60;
+    pointer-events: auto;
+    display: none;
+    transform: translateY(100%);
+}
+
+.monitor-opening {
+    display: block !important;
+    animation: monitor-up 0.3s ease-out forwards;
+}
+
+.monitor-closing {
+    animation: monitor-down 0.3s ease-in forwards;
+}
+
+@keyframes monitor-up {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0%); }
+}
+
+@keyframes monitor-down {
+    from { transform: translateY(0%); }
+    to   { transform: translateY(100%); }
+}
+
+/* ----------------------------------------------------------
+   17. CAMERA VIEW (the main feed area)
+   FNAF 1: desaturated, grainy, with scanlines and vignette.
+   ---------------------------------------------------------- */
+#cam-view {
+    position: absolute;
+    top: 3%; left: 3%;
+    width: 62%; height: 80%;
+    border: 3px solid #555;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #050505;
+    box-shadow: 0 0 50px rgba(0,0,0,.8);
+    overflow: hidden;
+}
+
+/* Camera scanlines — always visible on camera feed */
+#cam-view::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,0,0,0.3) 2px,
+        rgba(0,0,0,0.3) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Camera vignette — dark edges on camera feed */
+#cam-view::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+    pointer-events: none;
+    z-index: 11;
+}
+
+/* Canvas-based animated noise */
+#cam-noise-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    opacity: 0.08;
+    z-index: 4;
+    mix-blend-mode: screen;
+}
+
+/* Static burst overlay — flashes on camera switch */
+#cam-static-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 12;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.05s;
+    background: #000;
+}
+
+#cam-static-overlay.burst {
+    opacity: 1;
+}
+
+#cam-static-overlay.fade-out {
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+}
+
+/* Horizontal interference band that scrolls through */
+.cam-interference {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+}
+
+.cam-interference::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(255,255,255,0.03) 20%,
+        rgba(255,255,255,0.06) 50%,
+        rgba(255,255,255,0.03) 80%,
+        transparent 100%
+    );
+    animation: interference-scroll 8s linear infinite;
+}
+
+@keyframes interference-scroll {
+    0%   { top: -30%; }
+    100% { top: 100%; }
+}
+
+/* ----------------------------------------------------------
+   18. CAMERA HUD ELEMENTS (FNAF 1 authentic)
+   ---------------------------------------------------------- */
+#cam-label {
+    position: absolute;
+    bottom: 15px; right: 15px;
+    font-size: 18px;
+    z-index: 15;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+    font-weight: bold;
+}
+
+#cam-ai-visual {
+    font-size: 120px;
+    filter: grayscale(60%) brightness(.8) contrast(1.1);
+    z-index: 1;
+    text-shadow: 0 0 30px #000;
+    transition: .3s;
+}
+
+/* REC indicator - blinking red dot + text */
+.cam-rec {
+    position: absolute;
+    top: 15px; left: 15px;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.cam-rec-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #f00;
+    box-shadow: 0 0 6px #f00, 0 0 12px rgba(255,0,0,0.4);
+    animation: rec-blink 1s steps(1) infinite;
+}
+
+@keyframes rec-blink {
+    0%, 70% { opacity: 1; }
+    71%, 100% { opacity: 0; }
+}
+
+/* Timestamp in camera */
+.cam-timestamp {
+    position: absolute;
+    top: 15px; right: 15px;
+    z-index: 15;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* Signal bars indicator */
+.cam-signal {
+    position: absolute;
+    top: 35px; left: 15px;
+    z-index: 15;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+}
+
+.signal-bar {
+    width: 3px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 1px;
+}
+
+.signal-bar:nth-child(1) { height: 4px; }
+.signal-bar:nth-child(2) { height: 7px; }
+.signal-bar:nth-child(3) { height: 10px; }
+.signal-bar:nth-child(4) { height: 14px; }
+
+.signal-bar.off {
+    background: rgba(255,255,255,0.15);
+}
+
+/* ----------------------------------------------------------
+   19. CAMERA MAP & BUTTONS
+   ---------------------------------------------------------- */
+#map {
+    position: absolute;
+    bottom: 40px; right: 20px;
+    width: 350px; height: 350px;
+    border: 2px solid #555;
+    background: rgba(0,0,0,.85);
+    pointer-events: auto;
+}
+
+.cam-btn {
+    position: absolute;
+    background: rgba(30,30,30,.8);
+    color: #888;
+    border: 1px solid #666;
+    cursor: pointer;
+    font-size: 12px;
+    width: 55px; height: 40px;
+    text-align: center;
+    transition: .1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.cam-btn:hover,
+.cam-btn.active {
+    background: #ddd;
+    color: #000;
+    font-weight: 700;
+    border-color: #fff;
+}
+
+/* Camera button positions */
+#cam-1A { top: 15px;  left: 147px; }
+#cam-1B { top: 65px;  left: 147px; }
+#cam-1C { top: 125px; left: 90px; }
+#cam-5  { top: 90px;  left: 20px; }
+#cam-7  { top: 90px;  right: 20px; }
+#cam-3  { top: 190px; left: 30px; }
+#cam-2A { top: 190px; left: 100px; }
+#cam-2B { top: 250px; left: 100px; }
+#cam-4A { top: 190px; right: 100px; }
+#cam-4B { top: 250px; right: 100px; }
+#cam-6  { top: 190px; right: 20px; }
+
+.you-are-here {
+    position: absolute;
+    bottom: 15px; left: 140px;
+    width: 70px; height: 25px;
+    background: #111;
+    border: 2px solid #600;
+    color: #d00;
+    font-size: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+}
+
+/* ----------------------------------------------------------
+   20. JUMPSCARE & ENDGAME SCREENS
+   FNAF 1: aggressive zoom-in, screen shake, brief static
+   ---------------------------------------------------------- */
+#game-over,
+#gf-jumpscare,
+#jumpscare,
+#win-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 200;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    flex-direction: column;
+}
+
+#jumpscare-icon {
+    display: inline-block;
+    filter: drop-shadow(0 0 50px red) contrast(150%) brightness(1.2);
+    animation: jump-zoom .4s cubic-bezier(.1,0,0,1) forwards, fast-shake .04s infinite;
+}
+
+#gf-jumpscare-icon {
+    font-size: 300px;
+    filter: sepia(1) hue-rotate(15deg) saturate(3) drop-shadow(0 0 50px gold);
+}
+
+@keyframes jump-zoom {
+    0%   { transform: scale(.5) translateY(30px); opacity: 0; }
+    15%  { opacity: 1; }
+    100% { transform: scale(4.5) translateY(0); opacity: 1; }
+}
+
+@keyframes fast-shake {
+    0%   { margin-left: 0;    margin-top: 0; }
+    25%  { margin-left: 20px; margin-top: -20px; }
+    50%  { margin-left: -20px; margin-top: 20px; }
+    75%  { margin-left: 20px; margin-top: 20px; }
+    100% { margin-left: -10px; margin-top: -10px; }
+}
+
+/* Jumpscare static flash — briefly flashes before jumpscare */
+#jumpscare-static {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 199;
+    pointer-events: none;
+    display: none;
+}
+
+#jumpscare-static canvas {
+    width: 100%; height: 100%;
+}
+
+/* Screen shake during jumpscare */
+@keyframes screen-shake {
+    0%   { transform: translate(0, 0); }
+    10%  { transform: translate(-8px, 6px); }
+    20%  { transform: translate(6px, -8px); }
+    30%  { transform: translate(-6px, 4px); }
+    40%  { transform: translate(4px, -6px); }
+    50%  { transform: translate(-4px, 6px); }
+    60%  { transform: translate(6px, -4px); }
+    70%  { transform: translate(-6px, 6px); }
+    80%  { transform: translate(4px, -4px); }
+    90%  { transform: translate(-4px, 4px); }
+    100% { transform: translate(0, 0); }
+}
+
+body.shaking {
+    animation: screen-shake 0.08s infinite;
+}
+
+/* Power-out darkness overlay */
+#powerout-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 50;
+    display: none;
+    pointer-events: none;
+}
+
+/* ----------------------------------------------------------
+   21. NIGHT INDICATOR (6 AM win)
+   ---------------------------------------------------------- */
+#win-screen {
+    background: #000;
+}
+
+#win-screen #win-text {
+    font-size: 60px;
+    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+    animation: six-am-flicker 0.5s ease-in-out 3;
+}
+
+@keyframes six-am-flicker {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.5; }
+}

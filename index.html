@@ -4,163 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Night Shift</title>
-    <style>
-        body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background-color:#000;color:#fff;font-family:'Courier New',Courier,monospace;user-select:none}
-        
-        #lens-effect {position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%);box-shadow:inset 0 0 100px rgba(0,0,0,1);pointer-events:none;z-index:45;}
-        .crt-lines {position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);background-size:100% 4px;pointer-events:none;z-index:46;opacity:0.6;}
-        
-        #vignette{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,transparent 30%,rgba(0,0,0,.95) 90%);pointer-events:none;z-index:40}
-        #static-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.05"/%3E%3C/svg%3E');pointer-events:none;z-index:41;opacity:.5}
-        
-        .heavy-static{opacity:.8!important;animation:flicker .1s infinite!important;z-index:999!important;background-color:#111}
-        @keyframes flicker{0%{opacity:.8}50%{opacity:.4}100%{opacity:.9}}
-        
-        #start-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;z-index:200;display:flex;justify-content:center;align-items:center;flex-direction:column}
-        #start-screen h1{font-size:50px;color:#a00;text-shadow:0 0 10px red;margin-bottom:0}
-        #start-night-display{font-size:24px;color:#aaa;margin-bottom:30px}
-        
-        #instruction-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;z-index:150;display:none;justify-content:center;align-items:center;flex-direction:column;font-size:18px;line-height:1.5;background-image:radial-gradient(circle at center,#111 0,#000 100%)}
-        .inst-box{border:2px solid #444;padding:40px;background:rgba(10,10,10,.9);max-width:650px;text-align:left;box-shadow:0 0 30px #000;border-radius:5px}
-        .inst-box h2{color:#a00;text-align:center;font-size:36px;margin-top:0;text-shadow:0 0 5px red;letter-spacing:2px}
-        .inst-box ul{list-style-type:square;color:#ddd;padding-left:20px}
-        .inst-box li{margin-bottom:15px}
-        .inst-highlight{color:#ff5555;font-weight:bold}
-        
-        .menu-btn{background:0 0;border:2px solid #555;color:#fff;padding:15px 30px;font-size:20px;font-family:inherit;cursor:pointer;transition:.2s;margin:10px;width:250px;text-transform:uppercase;letter-spacing:1px}
-        .menu-btn:hover{background:#fff;color:#000;font-weight:700}
-        
-        #hud{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
-        .top-right{position:absolute;top:20px;right:30px;text-align:right;font-size:24px;text-shadow:2px 2px 0 #000; display: flex; flex-direction: column; align-items: flex-end;}
-        .bottom-left{position:absolute;bottom:30px;left:30px;font-size:20px;text-shadow:2px 2px 0 #000;background:rgba(0,0,0,.5);padding:10px;border-radius:5px}
-        #cam-toggle{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:400px;height:40px;background:rgba(255,255,255,.1);border:2px solid #555;border-bottom:none;color:#aaa;cursor:pointer;pointer-events:auto;font-size:18px;transition:.2s;border-radius:10px 10px 0 0;z-index:101}
-        #cam-toggle:hover{background:rgba(255,255,255,.3);color:#fff;height:45px}
-        
-        #volume-control {pointer-events: auto; display: flex; align-items: center; background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 20px; margin-top: 10px; border: 1px solid #333; transition: 0.3s;}
-        #volume-icon {font-size: 24px; cursor: pointer; margin-right: 5px; text-shadow: 0 0 5px #fff;}
-        #volume-slider {width: 0px; opacity: 0; transition: all 0.3s ease-in-out; cursor: pointer; -webkit-appearance: none; appearance: none; height: 5px; background: #333; outline: none; border-radius: 5px;}
-        #volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 15px; height: 15px; background: #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 0 5px #fff; }
-        #volume-slider::-moz-range-thumb { width: 15px; height: 15px; background: #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 0 5px #fff; }
-        #volume-control:hover #volume-slider {width: 100px; opacity: 1; margin-left: 5px;}
-        #volume-control:hover { border-color: #777; }
-
-        #viewport{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;}
-        #office{position:absolute;top:0;left:0;width:160vw;height:100%;background:linear-gradient(to right,#050505,#151515,#151515,#050505);transition:transform .1s ease-out;display:flex;justify-content:space-between;align-items:center}
-        
-        .wall-texture{position:absolute;width:100%;height:80%;top:0;background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.2) 0,rgba(0,0,0,.2) 2px,transparent 2px,transparent 4px);pointer-events:none;opacity:.3}
-        .floor{position:absolute;bottom:0;left:0;width:100%;height:20%;background:repeating-linear-gradient(45deg,#151515,#151515 30px,#0a0a0a 30px,#0a0a0a 60px);z-index:0;border-top:5px solid #000}
-        .desk{position:absolute;bottom:-10%;left:30vw;width:100vw;height:40%;background:#221510;border-top:15px solid #110906;box-shadow:0 -20px 50px rgba(0,0,0,.9);display:flex;justify-content:center;align-items:flex-start;padding-top:20px;z-index:2}
-        .fan{font-size:60px;margin-right:50px;animation:spin .15s linear infinite;filter:brightness(.6)}
-        .desk-monitor{width:120px;height:90px;background:#0a0a0a;border:5px solid #222;border-radius:5px;box-shadow:inset 0 0 15px #000}
-        @keyframes spin{100%{transform:rotate(360deg)}}
-        .hallway{width:25vw;height:100%;background:#0f0f0f;position:relative;border-left:10px solid #1a1a1a;border-right:10px solid #1a1a1a;display:flex;align-items:center;justify-content:center;z-index:1}
-        .door{position:absolute;top:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,#333,#333 10px,#1a1a1a 10px,#1a1a1a 20px);transform:translateY(-100%);transition:transform .3s ease;border-bottom:15px solid #444;box-shadow:inset 0 -10px 20px rgba(0,0,0,.8); z-index: 3;}
-        .door.closed{transform:translateY(0)}
-        
-        .light-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,rgba(200,200,150,.45) 0,rgba(0,0,0,.8) 80%);opacity:0;transition:opacity .1s;pointer-events:none; z-index: 1;}
-        .light-overlay.active{opacity:1}
-
-        /* --- CSS CHO ANIMATRONIC Ở CỬA ĐÃ ĐƯỢC LÀM LẠI HOÀN TOÀN --- */
-        .animatronic-door {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70%;
-            max-height: 95%;
-            object-fit: contain;
-            /* Mặc định luôn trong suốt (Tàng hình) */
-            opacity: 0; 
-            z-index: 2;
-            filter: drop-shadow(0 0 30px #000) brightness(0.15) contrast(1.3) sepia(0.3);
-            transition: opacity 0.1s, filter 0.15s ease-in-out;
-            pointer-events: none;
-        }
-
-        /* Chỉ khi nào class .is-here được thêm vào (Bởi JS) thì nó mới hiện lên, nhưng vẫn TỐI */
-        .animatronic-door.is-here {
-            opacity: 1; 
-        }
-
-        /* Khi đèn bật VÀ Animatronic đang ở đó -> Mới SÁNG lên */
-        .light-overlay.active ~ .animatronic-door.is-here {
-            filter: drop-shadow(0 0 10px rgba(0,0,0,0.8)) brightness(0.85) contrast(1.1) sepia(0.1);
-        }
-
-        /* QUAN TRỌNG: Khi cửa ĐÓNG, bóng đen Animatronic phải bị che lấp hoàn toàn! */
-        .door.closed ~ .animatronic-door {
-            opacity: 0 !important; /* Ghi đè mọi hiệu ứng hiện có */
-        }
-        
-        #right-window{position:absolute;top:20%;right:32vw;width:100px;height:150px;background:#050505;border:5px solid #222;z-index:1;overflow:hidden;box-shadow:inset 0 0 30px #000}
-        #window-character{font-size:80px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity: 0;filter:drop-shadow(0 0 10px rgba(255,0,0,.5)); transition: opacity 0.1s;}
-        
-        /* Cửa sổ phải cũng tương tự: Sáng đèn mới thấy mặt */
-        .light-overlay.active ~ #window-character.is-here {
-            opacity: 1;
-        }
-
-        .control-panel{position:absolute;top:50%;width:70px;height:140px;background:linear-gradient(to bottom,#333,#111);border:2px solid #000;border-radius:10px;transform:translateY(-50%);display:flex;flex-direction:column;justify-content:space-around;align-items:center;pointer-events:auto;z-index:5;box-shadow:5px 5px 15px rgba(0,0,0,.9)}
-        .left-panel{left:26vw}.right-panel{right:26vw}
-        .btn{width:45px;height:45px;border-radius:5px;cursor:pointer;border:3px solid #000;transition:.1s}
-        .btn-door{background:#6a0000}.btn-door.active{background:#ff3333;box-shadow:0 0 15px #f00}
-        .btn-light{background:#776600}.btn-light.active{background:#ffff66;box-shadow:0 0 15px #ff0}
-        
-        .freddy-flashing{opacity: 1 !important; animation:freddy-flash 1s infinite alternate step-end;z-index:100}
-        @keyframes freddy-flash{0%,49%{opacity:0;filter:drop-shadow(0 0 0 transparent)}50%,100%{opacity:1;filter:drop-shadow(0 0 15px rgba(255,255,255,.8))}}
-        #golden-freddy-office{position:absolute;bottom:5%;left:45%;font-size:150px;display:none;filter:sepia(1) hue-rotate(15deg) saturate(3) drop-shadow(0 0 20px rgba(255,215,0,.5));z-index:3}
-        
-        /* CAMERA SYSTEM */
-        #camera-system{
-            position:absolute; top:0; left:0; width:100%; height:100%;
-            background:repeating-linear-gradient(0deg,rgba(0,0,0,.95),rgba(0,0,0,.95) 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 4px);
-            z-index:60; pointer-events:auto;
-            display: none; transform: translateY(100%); 
-        }
-        .monitor-opening { display: block !important; animation: monitor-up 0.3s ease-out forwards; }
-        .monitor-closing { animation: monitor-down 0.3s ease-in forwards; }
-        @keyframes monitor-up { from { transform: translateY(100%); } to { transform: translateY(0%); } }
-        @keyframes monitor-down { from { transform: translateY(0%); } to { transform: translateY(100%); } }
-
-        #cam-view{position:absolute;top:5%;left:5%;width:60%;height:75%;border:3px solid #777;display:flex;justify-content:center;align-items:center;background:#0a0a0a;box-shadow:0 0 50px rgba(0,0,0,.8);position:relative;overflow:hidden}
-        .cam-noise{position:absolute;top:-10%;left:-10%;width:120%;height:120%;background:url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.15"/%3E%3C/svg%3E');pointer-events:none;animation:tv-static 0.3s steps(2) infinite;}
-        @keyframes tv-static { 0%{transform:translate(0,0)} 25%{transform:translate(-5px,5px)} 50%{transform:translate(5px,-5px)} 75%{transform:translate(-5px,-5px)} 100%{transform:translate(5px,5px)} }
-
-        #monitor-static-burst {
-            position:absolute; top:0; left:0; width:100%; height:100%;
-            background: repeating-linear-gradient(0deg, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.85) 80px, transparent 80px, transparent 160px);
-            background-size: 100% 320px;
-            animation: scanline-burst 0.1s linear infinite;
-            z-index:5; display:none; pointer-events:none; mix-blend-mode: overlay; opacity: 0.7;
-        }
-        @keyframes scanline-burst { 0%{background-position:0 0} 100%{background-position:0 320px} }
-
-        #cam-label{position:absolute;top:20px;left:20px;font-size:24px;z-index:6;color:#fff;background:rgba(0,0,0,0.5);padding:5px;}
-        #cam-ai-visual{font-size:120px;filter:grayscale(80%) brightness(.7);z-index:1;text-shadow:0 0 30px #000;transition:.3s}
-        
-        #map{position:absolute;bottom:60px;right:30px;width:350px;height:350px;border:2px solid #555;background:rgba(0,0,0,.8);pointer-events:auto}
-        .cam-btn{position:absolute;background:rgba(30,30,30,.8);color:#888;border:1px solid #666;cursor:pointer;font-size:12px;width:55px;height:40px;text-align:center;transition:.1s;display:flex;justify-content:center;align-items:center; box-sizing: border-box;}
-        .cam-btn:hover,.cam-btn.active{background:#ddd;color:#000;font-weight:700;border-color:#fff}
-        
-        #cam-1A{top:15px;left:147px} #cam-1B{top:65px;left:147px} #cam-1C{top:125px;left:90px} #cam-5{top:90px;left:20px} #cam-7{top:90px;right:20px} 
-        #cam-3{top:190px;left:30px} #cam-2A{top:190px;left:100px} #cam-2B{top:250px;left:100px} #cam-4A{top:190px;right:100px} #cam-4B{top:250px;right:100px} #cam-6{top:190px;right:20px} 
-        .you-are-here{position:absolute;bottom:15px;left:140px;width:70px;height:25px;background:#111;border:2px solid #600;color:#d00;font-size:11px;display:flex;justify-content:center;align-items:center;font-weight:700}
-
-        #game-over,#gf-jumpscare,#jumpscare,#win-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;z-index:200;display:none;justify-content:center;align-items:center;font-size:50px;flex-direction:column}
-        #jumpscare-icon{display:inline-block;filter:drop-shadow(0 0 50px red) contrast(150%);animation:jump-zoom .5s cubic-bezier(.1,0,0,1) forwards,fast-shake .05s infinite}
-        #gf-jumpscare-icon{font-size:300px;filter:sepia(1) hue-rotate(15deg) saturate(3) drop-shadow(0 0 50px gold)}
-        @keyframes jump-zoom{0%{transform:scale(.1) translateY(50px);opacity:0}100%{transform:scale(5) translateY(0);opacity:1}}
-        @keyframes fast-shake{0%,100%{margin-left:0;margin-top:0}25%{margin-left:15px;margin-top:-15px}50%{margin-left:-15px;margin-top:15px}75%{margin-left:15px;margin-top:15px}}
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <script>
-        document.addEventListener('contextmenu',e=>e.preventDefault());
-        document.addEventListener('keydown',e=>{
-            if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key.toUpperCase()))||(e.ctrlKey&&e.key.toUpperCase()==='U')) e.preventDefault();
-        });
-    </script>
 
+    <!-- ========== START SCREEN ========== -->
     <div id="start-screen">
         <h1>NIGHT SHIFT</h1>
         <div id="start-night-display">Night 1</div>
@@ -168,6 +16,7 @@
         <button class="menu-btn" onclick="resetData()" style="font-size:14px;width:150px;border-color:#400;color:#844">ERASE DATA</button>
     </div>
 
+    <!-- ========== INSTRUCTION SCREEN ========== -->
     <div id="instruction-screen">
         <div class="inst-box">
             <h2>HOW TO PLAY</h2>
@@ -184,41 +33,54 @@
         </div>
     </div>
 
-    <div id="lens-effect"></div>
-    <div class="crt-lines"></div>
+    <!-- ========== ATMOSPHERE OVERLAYS (office only) ========== -->
     <div id="vignette"></div>
     <div id="static-overlay"></div>
-    
+
+    <!-- ========== POWER OUT OVERLAY ========== -->
+    <div id="powerout-overlay"></div>
+
+    <!-- ========== OFFICE VIEWPORT ========== -->
     <div id="viewport">
         <div id="office">
             <div class="wall-texture"></div>
             <div class="floor"></div>
-            
+
+            <!-- Left Hallway (Bonnie) -->
             <div class="hallway" id="left-hall">
                 <div class="door" id="door-left"></div>
                 <div class="light-overlay" id="light-left-overlay"></div>
                 <div class="animatronic-door" id="ai-left-visual">🐰</div>
             </div>
-            
+
+            <!-- Left Control Panel -->
             <div class="control-panel left-panel">
                 <div class="btn btn-door" id="btn-door-left" onclick="toggleDoor('left')"></div>
                 <div class="btn btn-light" id="btn-light-left" onmousedown="toggleLight('left',true)" onmouseup="toggleLight('left',false)" onmouseleave="toggleLight('left',false)"></div>
             </div>
 
-            <div id="right-window"><div id="window-character">🐔</div></div>
+            <!-- Right Window (Chica peek) -->
+            <div id="right-window">
+                <div id="window-character">🐔</div>
+            </div>
+
+            <!-- Golden Freddy Apparition -->
             <div id="golden-freddy-office">🐻</div>
 
+            <!-- Desk -->
             <div class="desk">
                 <div class="fan">❄️</div>
                 <div class="desk-monitor"></div>
                 <div class="desk-monitor"></div>
             </div>
 
+            <!-- Right Control Panel -->
             <div class="control-panel right-panel">
                 <div class="btn btn-door" id="btn-door-right" onclick="toggleDoor('right')"></div>
                 <div class="btn btn-light" id="btn-light-right" onmousedown="toggleLight('right',true)" onmouseup="toggleLight('right',false)" onmouseleave="toggleLight('right',false)"></div>
             </div>
 
+            <!-- Right Hallway (Chica) -->
             <div class="hallway" id="right-hall">
                 <div class="door" id="door-right"></div>
                 <div class="light-overlay" id="light-right-overlay"></div>
@@ -227,8 +89,9 @@
         </div>
     </div>
 
+    <!-- ========== HUD ========== -->
     <div id="hud">
-        <div class="top-right">
+        <div class="hud-top-right">
             <div id="time-display">12:00 AM</div>
             <div id="night-display">Night 1</div>
             <div id="volume-control">
@@ -236,17 +99,39 @@
                 <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
             </div>
         </div>
-        <div class="bottom-left">
+        <div class="hud-bottom-left">
             <div style="color:#aaa">Power: <span id="power-display" style="color:#fff">100%</span></div>
             <div style="color:#aaa">Usage: <span id="usage-display">🔋</span></div>
         </div>
         <button id="cam-toggle" onclick="toggleCameras()">Open Monitor</button>
     </div>
-    
+
+    <!-- ========== CAMERA SYSTEM ========== -->
     <div id="camera-system">
         <div id="cam-view">
-            <div class="cam-noise"></div>
-            <div id="monitor-static-burst"></div> 
+            <!-- Noise layers -->
+            <canvas id="cam-noise-canvas" width="256" height="192"></canvas>
+            <div class="cam-interference"></div>
+
+            <!-- Static burst overlay (for camera switch) -->
+            <div id="cam-static-overlay">
+                <canvas id="cam-static-canvas" width="256" height="192" style="width:100%;height:100%;"></canvas>
+            </div>
+
+            <!-- Camera HUD elements -->
+            <div class="cam-rec">
+                <div class="cam-rec-dot"></div>
+                <span>REC</span>
+            </div>
+            <div class="cam-signal">
+                <div class="signal-bar"></div>
+                <div class="signal-bar"></div>
+                <div class="signal-bar"></div>
+                <div class="signal-bar off"></div>
+            </div>
+            <div class="cam-timestamp" id="cam-timestamp">12:00:00 AM</div>
+
+            <!-- Camera feed content -->
             <div id="cam-label">CAM 1A - Show Stage</div>
             <div id="cam-ai-visual"></div>
         </div>
@@ -266,105 +151,13 @@
         </div>
     </div>
 
+    <!-- ========== JUMPSCARE & ENDGAME ========== -->
+    <div id="jumpscare-static"><canvas id="jumpscare-static-canvas" width="320" height="240"></canvas></div>
     <div id="jumpscare"><div id="jumpscare-icon"></div></div>
     <div id="gf-jumpscare"><div id="gf-jumpscare-icon">🐻</div></div>
     <div id="game-over">GAME OVER<br><button onclick="location.reload()" style="padding:10px;font-size:20px;margin-top:20px;cursor:pointer;background:#222;color:#fff;border:2px solid #fff">Retry</button></div>
     <div id="win-screen"><span id="win-text">6:00 AM</span><br><span id="win-subtext" style="font-size:30px">YOU SURVIVED</span><br><button onclick="location.reload()" style="padding:10px;font-size:20px;margin-top:20px;cursor:pointer;background:#fff;color:#000">Continue</button></div>
 
-    <script>
-        let savedNight=parseInt(localStorage.getItem('fnaf_web_night'))||1;if(savedNight>5)savedNight=5;document.getElementById('start-night-display').innerText=`Night ${savedNight}`;document.getElementById('night-display').innerText=`Night ${savedNight}`;function resetData(){if(confirm("Are you sure you want to erase all data (Return to Night 1)?")){localStorage.removeItem('fnaf_web_night');location.reload()}}
-        
-        let audioCtx,droneOsc,freddyMusicInterval,gfHallucinationOsc,masterGainNode,globalVolume=0.5,isMuted=!1;
-        function initAudio(){
-            if(!audioCtx){
-                audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-                masterGainNode = audioCtx.createGain();
-                masterGainNode.gain.setValueAtTime(globalVolume, audioCtx.currentTime);
-                masterGainNode.connect(audioCtx.destination); 
-                droneOsc=audioCtx.createOscillator();let e=audioCtx.createGain();
-                droneOsc.type='sine';droneOsc.frequency.setValueAtTime(40,audioCtx.currentTime);
-                e.gain.setValueAtTime(.5,audioCtx.currentTime);
-                droneOsc.connect(e);
-                e.connect(masterGainNode); 
-                droneOsc.start()
-            }else if(audioCtx.state==='suspended')audioCtx.resume()
-        }
-
-        const toreadorNotes=[349.23,349.23,349.23,293.66,233.08,293.66,261.63,261.63,261.63,220,261.63,293.66];
-        function playFreddyMusicBox(){if(!audioCtx)return;let e=0;freddyMusicInterval=setInterval(()=>{let t=audioCtx.createOscillator(),n=audioCtx.createGain();t.type='sine';t.frequency.value=toreadorNotes[e];t.connect(n);
-        n.connect(masterGainNode); 
-        n.gain.setValueAtTime(.3,audioCtx.currentTime);n.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.4);t.start();t.stop(audioCtx.currentTime+.4);e=(e+1)%toreadorNotes.length},500)}
-        
-        function playSound(e){if(!audioCtx)return;let t=audioCtx.createOscillator(),n=audioCtx.createGain();t.connect(n);
-        n.connect(masterGainNode); 
-        if('click'===e||'door'===e||'light'===e){t.type='click'===e?'square':'door'===e?'triangle':'sawtooth';let i='click'===e?400:'door'===e?100:60;t.frequency.setValueAtTime(i,audioCtx.currentTime);n.gain.setValueAtTime('door'===e?.5:.1,audioCtx.currentTime);n.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.2);t.start();t.stop(audioCtx.currentTime+.2)}else if('jumpscare'===e){t.type='sawtooth';t.frequency.setValueAtTime(100,audioCtx.currentTime);t.frequency.exponentialRampToValueAtTime(800,audioCtx.currentTime+1.5);let i=audioCtx.createOscillator();i.type='square';i.frequency.setValueAtTime(150,audioCtx.currentTime);i.connect(n);i.start();i.stop(audioCtx.currentTime+2);n.gain.setValueAtTime(1,audioCtx.currentTime);t.start();t.stop(audioCtx.currentTime+2)}else if('gf-hallucination'===e){gfHallucinationOsc=audioCtx.createOscillator();gfHallucinationOsc.type='square';gfHallucinationOsc.frequency.setValueAtTime(20,audioCtx.currentTime);let i=audioCtx.createGain();i.gain.setValueAtTime(2,audioCtx.currentTime);gfHallucinationOsc.connect(i);i.connect(masterGainNode);gfHallucinationOsc.start()}else if('gf-crash'===e){t.type='square';t.frequency.setValueAtTime(50,audioCtx.currentTime);n.gain.setValueAtTime(2,audioCtx.currentTime);t.start();t.stop(audioCtx.currentTime+3)}else if('static'===e){t.type='sawtooth';t.frequency.setValueAtTime(100,audioCtx.currentTime);n.gain.setValueAtTime(.2,audioCtx.currentTime);n.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.15);t.start();t.stop(audioCtx.currentTime+.15)}}
-
-        const volSlider = document.getElementById('volume-slider');
-        const volIcon = document.getElementById('volume-icon');
-        volSlider.addEventListener('input', (e) => {
-            globalVolume = parseFloat(e.target.value);
-            if(isMuted) toggleMute(); 
-            if(masterGainNode) masterGainNode.gain.setValueAtTime(globalVolume, audioCtx.currentTime);
-            updateIconBasedOnVolume();
-        });
-        volIcon.addEventListener('click', toggleMute);
-        function toggleMute() {
-            isMuted = !isMuted;
-            if (isMuted) {
-                 volIcon.innerText = '🔇';
-                 if(masterGainNode) masterGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-                 volSlider.value = 0;
-            } else {
-                 if(globalVolume === 0) globalVolume = 0.5; 
-                 if(masterGainNode) masterGainNode.gain.setValueAtTime(globalVolume, audioCtx.currentTime);
-                 volSlider.value = globalVolume;
-                 updateIconBasedOnVolume();
-            }
-        }
-        function updateIconBasedOnVolume() {
-             if(isMuted || globalVolume === 0) { volIcon.innerText = '🔇'; }
-             else if(globalVolume < 0.5) { volIcon.innerText = '🔉'; }
-             else { volIcon.innerText = '🔊'; }
-        }
-
-        let state={power:100,timeHour:12,night:savedNight,isCamOpen:!1,doors:{left:!1,right:!1},lights:{left:!1,right:!1},currentCam:'1A',isPowerOut:!1,gameActive:!1,gfActive:!1},timeInSeconds=0;const SECONDS_PER_HOUR=45;let gameLoop,aiLoop,gfTimeout;const AI_LIST=[{name:'Bonnie',icon:'🐰',side:'left',position:6,path:['1A','1B','5','1C','2A','2B','left_door'],level:2+savedNight},{name:'Chica',icon:'🐔',side:'right',position:6,path:['1A','1B','7','6','4A','4B','right_door'],level:1+savedNight}];function showInstructions(){document.getElementById('start-screen').style.display='none';document.getElementById('instruction-screen').style.display='flex';initAudio()}function startGameplay(){document.getElementById('instruction-screen').style.display='none';state.gameActive=!0;gameLoop=setInterval(gameTimerLoop,1e3);aiLoop=setInterval(updateAI,3e3);updateCamVisuals()}const office=document.getElementById('office');let officeX=-30;document.addEventListener('mousemove',e=>{if(state.isCamOpen||!state.gameActive||state.isPowerOut||'cam-toggle'===e.target.id)return;let t=e.clientX,n=window.innerWidth,i=1.5;if(t<n*.25)officeX+=i;else if(t>n*.75)officeX-=i;if(officeX>0)officeX=0;if(officeX<-60)officeX=-60;office.style.transform=`translateX(${officeX}vw)`});function updateUsageDisplay(){let e=1;if(state.doors.left)e++;if(state.doors.right)e++;if(state.lights.left)e++;if(state.lights.right)e++;if(state.isCamOpen)e++;let t="";for(let n=0;n<e;n++)t+="🔋";document.getElementById('usage-display').innerText=t;return e}
-        
-        function toggleDoor(e){
-            if(state.isPowerOut||!state.gameActive)return;
-            playSound('door');
-            state.doors[e]=!state.doors[e];
-            document.getElementById(`door-${e}`).classList.toggle('closed');
-            document.getElementById(`btn-door-${e}`).classList.toggle('active');
-            updateDoorVisuals(e);
-            updateUsageDisplay()
-        }
-        
-        function toggleLight(e,t){
-            if(state.isPowerOut||!state.gameActive)return;
-            if(t)playSound('light');
-            state.lights[e]=t;
-            let n=document.getElementById(`light-${e}-overlay`),i=document.getElementById(`btn-light-${e}`);
-            if(t){n.classList.add('active');i.classList.add('active')}else{n.classList.remove('active');i.classList.remove('active')}
-            updateUsageDisplay()
-        }
-        
-        /* ĐÃ SỬA: Hàm updateDoorVisuals chỉ phụ trách gán/xóa class .is-here, việc ẩn/hiện do CSS lo */
-        function updateDoorVisuals(e){
-            let t=AI_LIST.find(t=>t.side===e&&0===t.position),
-                n=document.getElementById(`ai-${e}-visual`),
-                i=document.getElementById('window-character');
-            
-            if(t){
-                if(n.tagName.toLowerCase() !== 'img') n.innerText=t.icon; // Chỉ đổi chữ nếu đang dùng emoji
-                n.classList.add('is-here'); 
-                if('right'===e){ i.innerText=t.icon; i.classList.add('is-here'); }
-            }else{
-                n.classList.remove('is-here');
-                if('right'===e) i.classList.remove('is-here');
-            }
-        }
-        
-        function triggerStaticBurst(){let e=document.getElementById('monitor-static-burst');e.style.display='block';playSound('static');setTimeout(()=>e.style.display='none',200)}function triggerGoldenFreddy(){state.gfActive=!0;document.getElementById('golden-freddy-office').style.display='block';playSound('gf-hallucination');gfTimeout=setTimeout(()=>{if(state.gfActive&&!state.isCamOpen)executeGoldenFreddyJumpscare()},2e3)}function cancelGoldenFreddy(){state.gfActive=!1;document.getElementById('golden-freddy-office').style.display='none';clearTimeout(gfTimeout);if(gfHallucinationOsc){gfHallucinationOsc.stop();gfHallucinationOsc=null}}function executeGoldenFreddyJumpscare(){state.gameActive=!1;clearInterval(gameLoop);clearInterval(aiLoop);if(gfHallucinationOsc){gfHallucinationOsc.stop();gfHallucinationOsc=null}playSound('gf-crash');document.getElementById('camera-system').style.display='none';document.getElementById('static-overlay').classList.add('heavy-static');document.getElementById('gf-jumpscare').style.display='flex';setTimeout(()=>{location.reload()},3e3)}function toggleCameras(){if(state.isPowerOut||!state.gameActive)return;playSound('click');state.isCamOpen=!state.isCamOpen;const e=document.getElementById('camera-system');if(!state.isCamOpen){e.classList.remove('monitor-opening');e.classList.add('monitor-closing');setTimeout(()=>{if(!state.isCamOpen)e.style.display='none'},300);if(Math.random()<.05&&!state.gfActive)triggerGoldenFreddy()}else{e.classList.remove('monitor-closing');e.classList.add('monitor-opening');triggerStaticBurst();if(state.gfActive)cancelGoldenFreddy()}document.getElementById('cam-toggle').innerText=state.isCamOpen?"Close Monitor":"Open Monitor";updateUsageDisplay();updateCamVisuals()}function switchCam(e,t){playSound('click');triggerStaticBurst();state.currentCam=e;document.getElementById('cam-label').innerText=`CAM ${e} - ${t}`;document.querySelectorAll('.cam-btn').forEach(e=>e.classList.remove('active'));document.getElementById(`cam-${e}`).classList.add('active');updateCamVisuals()}function updateAI(){if(!state.gameActive||state.isPowerOut)return;let camInterrupted=!1;AI_LIST.forEach(e=>{let t=Math.floor(Math.random()*20)+1;if(t<=e.level){let prevRoom=e.path[e.path.length-1-e.position];if(e.position===e.path.length-1)prevRoom='1A';let moved=!1;if(e.position>0){e.position--;moved=!0}else if(0===e.position){if(state.doors[e.side]){e.position=Math.floor(Math.random()*2)+1;moved=!0}else{triggerJumpscare(e.icon)}}if(moved&&state.isCamOpen){let newRoom=e.path[e.path.length-1-e.position];if(prevRoom===state.currentCam||newRoom===state.currentCam)camInterrupted=!0}}});if(camInterrupted)triggerStaticBurst();updateCamVisuals();updateDoorVisuals('left');updateDoorVisuals('right')}function updateCamVisuals(){if(!state.isCamOpen)return;if('6'===state.currentCam){document.getElementById('cam-ai-visual').innerText="[AUDIO ONLY]";return}let e=[];AI_LIST.forEach(t=>{let n=t.path[t.path.length-1-t.position];if(t.position===t.path.length-1)n='1A';if(n===state.currentCam)e.push(t.icon)});document.getElementById('cam-ai-visual').innerText=e.join(" ")}function triggerJumpscare(e){state.gameActive=!1;clearInterval(gameLoop);clearInterval(aiLoop);if(freddyMusicInterval)clearInterval(freddyMusicInterval);playSound('jumpscare');document.getElementById('camera-system').style.display='none';let t=document.getElementById('jumpscare');document.getElementById('jumpscare-icon').innerText=e;t.style.display='none';void t.offsetWidth;t.style.display='flex';setTimeout(()=>{t.style.display='none';document.getElementById('game-over').style.display='flex'},1500)}function gameTimerLoop(){if(!state.gameActive)return;timeInSeconds++;if(timeInSeconds>=SECONDS_PER_HOUR){timeInSeconds=0;state.timeHour++;if(13===state.timeHour)state.timeHour=1;document.getElementById('time-display').innerText=`${state.timeHour}:00 AM`;AI_LIST.forEach(e=>e.level++);if(6===state.timeHour){state.gameActive=!1;clearInterval(gameLoop);clearInterval(aiLoop);if(state.night<5){localStorage.setItem('fnaf_web_night',state.night+1);document.getElementById('win-subtext').innerText=`YOU SURVIVED NIGHT ${state.night}`}else{document.getElementById('win-subtext').innerText=`YOU BEAT NIGHT 5!`}document.getElementById('win-screen').style.display='flex';return}}if(!state.isPowerOut){let e=updateUsageDisplay()*.15;state.power-=e;if(state.power<=0){state.power=0;triggerPowerOut()}let t=state.power<20?'red':'white';document.getElementById('power-display').innerHTML=`<span style="color:${t}">${Math.floor(state.power)}%</span>`}}function triggerPowerOut(){state.isPowerOut=!0;state.isCamOpen=!1;document.getElementById('camera-system').style.display='none';document.getElementById('cam-toggle').style.display='none';if(state.gfActive)cancelGoldenFreddy();playSound('door');['left','right'].forEach(e=>{state.doors[e]=!1;document.getElementById(`door-${e}`).classList.remove('closed');document.getElementById(`btn-door-${e}`).classList.remove('active');toggleLight(e,!1)});document.getElementById('office').style.background='#000';document.getElementById('vignette').style.background='rgba(0,0,0,0.95)';document.querySelector('.wall-texture').style.opacity='0';document.getElementById('window-character').style.display='none';if(droneOsc){droneOsc.stop();droneOsc=null}let e=document.getElementById('ai-left-visual');e.innerText='🐻';e.className='animatronic-door freddy-flashing';playFreddyMusicBox();let t=5e3+Math.random()*7e3;setTimeout(()=>{clearInterval(freddyMusicInterval);e.className='animatronic-door';e.style.display='none';setTimeout(()=>{triggerJumpscare('🐻')},2e3+Math.random()*3e3)},t)}
-    </script>
+    <script src="game.js"></script>
 </body>
 </html>

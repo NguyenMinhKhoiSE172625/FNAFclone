@@ -3,25 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Night Shift - Prototype V6</title>
+    <title>Web Night Shift - Prototype V8 (Freddy & Golden Freddy)</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; color: white; font-family: 'Courier New', Courier, monospace; user-select: none; }
         
         #vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 90%); pointer-events: none; z-index: 40; }
         #static-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.05"/%3E%3C/svg%3E'); pointer-events: none; z-index: 41; opacity: 0.5;}
+        
+        /* Hiệu ứng nhiễu sóng mạnh cho Golden Freddy Jumpscare */
+        .heavy-static { opacity: 0.8 !important; animation: flicker 0.1s infinite !important; z-index: 999 !important; background-color: #111;}
+        @keyframes flicker { 0% { opacity: 0.8; } 50% { opacity: 0.4; } 100% { opacity: 0.9; } }
 
         /* Start Screen */
-        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 200; display: flex; justify-content: center; align-items: center; flex-direction: column; cursor: pointer; }
-        #start-screen h1 { font-size: 50px; color: #a00; text-shadow: 0 0 10px red; }
-        #start-screen p { font-size: 20px; color: #555; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 200; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        #start-screen h1 { font-size: 50px; color: #a00; text-shadow: 0 0 10px red; margin-bottom: 0;}
+        #start-night-display { font-size: 24px; color: #aaa; margin-bottom: 30px; }
+        .menu-btn { background: none; border: 2px solid #555; color: white; padding: 15px 30px; font-size: 20px; font-family: inherit; cursor: pointer; transition: 0.2s; margin: 10px; width: 250px;}
+        .menu-btn:hover { background: white; color: black; font-weight: bold;}
 
         /* HUD & Monitor Toggle */
         #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
         .top-right { position: absolute; top: 20px; right: 30px; text-align: right; font-size: 24px; text-shadow: 2px 2px 0 #000; }
         .bottom-left { position: absolute; bottom: 30px; left: 30px; font-size: 20px; text-shadow: 2px 2px 0 #000; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;}
-        #dialogue-box { position: absolute; top: 20px; left: 20px; width: 300px; background: rgba(0,0,0,0.8); border: 2px solid #555; padding: 15px; font-size: 14px; display: none; pointer-events: auto; box-shadow: 0 0 10px #000;}
-        
         #cam-toggle { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 400px; height: 40px; background: rgba(255,255,255,0.1); border: 2px solid #555; border-bottom: none; color: #aaa; cursor: pointer; pointer-events: auto; font-size: 18px; transition: 0.2s; border-radius: 10px 10px 0 0; z-index: 101;}
         #cam-toggle:hover { background: rgba(255,255,255,0.3); color: white; height: 45px;}
 
@@ -31,18 +34,15 @@
         
         .wall-texture { position: absolute; width: 100%; height: 80%; top: 0; background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 2px, transparent 2px, transparent 4px); pointer-events: none; opacity: 0.3;}
         .floor { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: repeating-linear-gradient(45deg, #151515, #151515 30px, #0a0a0a 30px, #0a0a0a 60px); z-index: 0; border-top: 5px solid #000;}
-        
         .desk { position: absolute; bottom: -10%; left: 30vw; width: 100vw; height: 40%; background: #221510; border-top: 15px solid #110906; box-shadow: 0 -20px 50px rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; z-index: 2;}
         .fan { font-size: 60px; margin-right: 50px; animation: spin 0.15s linear infinite; filter: brightness(0.6); }
         .desk-monitor { width: 120px; height: 90px; background: #0a0a0a; border: 5px solid #222; border-radius: 5px; box-shadow: inset 0 0 15px #000; }
-        
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* ĐÃ SỬA: Hallways & Doors Sáng hơn để dễ nhận biết */
+        /* Hallways & Doors */
         .hallway { width: 25vw; height: 100%; background: #0f0f0f; position: relative; border-left: 10px solid #1a1a1a; border-right: 10px solid #1a1a1a; display: flex; align-items: center; justify-content: center; z-index: 1;}
         .door { position: absolute; top: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, #333, #333 10px, #1a1a1a 10px, #1a1a1a 20px); transform: translateY(-100%); transition: transform 0.3s ease; border-bottom: 15px solid #444; box-shadow: inset 0 -10px 20px rgba(0,0,0,0.8);}
         .door.closed { transform: translateY(0); }
-        
         .light-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(200, 200, 150, 0.45) 0%, rgba(0, 0, 0, 0.8) 80%); opacity: 0; transition: opacity 0.1s; pointer-events: none;}
         .light-overlay.active { opacity: 1; }
         
@@ -55,43 +55,49 @@
         .btn-door { background: #6a0000; } .btn-door.active { background: #ff3333; box-shadow: 0 0 15px #ff0000;}
         .btn-light { background: #776600; } .btn-light.active { background: #ffff66; box-shadow: 0 0 15px #ffff00;}
 
+        /* CƠ CHẾ MỚI: Hình ảnh Animatronic & Hiệu ứng Freddy Nhấp nháy */
         .animatronic-door { position: absolute; font-size: 80px; display: none; filter: drop-shadow(0 0 20px #000) brightness(0.6);}
+        .freddy-flashing { display: block !important; animation: freddy-flash 1s infinite alternate step-end; z-index: 100;}
+        @keyframes freddy-flash {
+            0%, 49% { opacity: 0; filter: drop-shadow(0 0 0px transparent); }
+            50%, 100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)); }
+        }
 
-        /* Camera UI */
+        /* CƠ CHẾ MỚI: Golden Freddy trong văn phòng */
+        #golden-freddy-office { position: absolute; bottom: 5%; left: 45%; font-size: 150px; display: none; filter: sepia(1) hue-rotate(15deg) saturate(3) drop-shadow(0 0 20px rgba(255,215,0,0.5)); z-index: 3;}
+        
         #camera-system { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.95), rgba(0,0,0,0.95) 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px); z-index: 60; display: none; pointer-events: auto;}
         #cam-view { position: absolute; top: 5%; left: 5%; width: 65%; height: 75%; border: 3px solid #777; display: flex; justify-content: center; align-items: center; background: #0a0a0a; box-shadow: 0 0 50px rgba(0,0,0,0.8); position: relative; overflow: hidden;}
         .cam-noise { position: absolute; top:0; left:0; width: 100%; height: 100%; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.15"/%3E%3C/svg%3E'); pointer-events: none; }
         #cam-label { position: absolute; top: 20px; left: 20px; font-size: 24px; z-index: 2; color: #fff;}
         #cam-ai-visual { font-size: 120px; filter: grayscale(80%) brightness(0.7); z-index: 1; text-shadow: 0 0 30px #000; transition: 0.3s;}
 
-        /* ĐÃ SỬA: Layout Map chuẩn xác theo game gốc, cố định kích thước cứng */
         #map { position: absolute; bottom: 80px; right: 40px; width: 280px; height: 320px; border: 2px solid #555; background: rgba(0,0,0,0.7); pointer-events: auto;}
         .cam-btn { position: absolute; background: rgba(30,30,30,0.8); color: #888; border: 1px solid #666; cursor: pointer; font-size: 14px; width: 55px; height: 40px; text-align: center; transition: 0.1s; display: flex; justify-content: center; align-items: center;}
         .cam-btn:hover, .cam-btn.active { background: #ddd; color: #000; font-weight: bold; border-color: white;}
-        
-        /* Tọa độ Pixel chuẩn xác cho Layout Map */
-        #cam-1A { top: 20px; left: 110px; } 
-        #cam-1B { top: 70px; left: 110px; } 
-        #cam-5  { top: 70px; left: 45px; } 
-        #cam-3  { top: 160px; left: 15px; } 
-        #cam-2A { top: 160px; left: 80px; } 
-        #cam-2B { top: 215px; left: 80px; } 
-        #cam-4A { top: 160px; left: 175px; } 
-        #cam-4B { top: 215px; left: 175px; } 
+        #cam-1A { top: 20px; left: 110px; } #cam-1B { top: 70px; left: 110px; } #cam-5  { top: 70px; left: 45px; } 
+        #cam-3  { top: 160px; left: 15px; } #cam-2A { top: 160px; left: 80px; } #cam-2B { top: 215px; left: 80px; } 
+        #cam-4A { top: 160px; left: 175px; } #cam-4B { top: 215px; left: 175px; } 
         .you-are-here { position: absolute; bottom: 15px; left: 107px; width: 60px; height: 25px; background: #111; border: 2px solid #600; color: #d00; font-size: 11px; display: flex; justify-content: center; align-items: center; font-weight: bold;}
 
-        /* Jumpscare */
-        #jumpscare, #game-over, #win-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 200; display: none; justify-content: center; align-items: center; font-size: 50px; flex-direction: column;}
+        /* Jumpscare & End Screens */
+        #jumpscare, #gf-jumpscare, #game-over, #win-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 200; display: none; justify-content: center; align-items: center; font-size: 50px; flex-direction: column;}
         #jumpscare-icon { display: inline-block; filter: drop-shadow(0 0 50px red) contrast(150%); animation: jump-zoom 0.5s cubic-bezier(0.1, 0, 0, 1) forwards, fast-shake 0.05s infinite; }
+        
+        /* CƠ CHẾ MỚI: Golden Freddy Jumpscare (Tĩnh, Lớn, Lỗi game) */
+        #gf-jumpscare-icon { font-size: 300px; filter: sepia(1) hue-rotate(15deg) saturate(3) drop-shadow(0 0 50px gold); }
+
         @keyframes jump-zoom { 0% { transform: scale(0.1) translateY(50px); opacity: 0; } 100% { transform: scale(5) translateY(0); opacity: 1; } }
         @keyframes fast-shake { 0%, 100% { margin-left: 0; margin-top: 0; } 25% { margin-left: 15px; margin-top: -15px; } 50% { margin-left: -15px; margin-top: 15px; } 75% { margin-left: 15px; margin-top: 15px; } }
     </style>
 </head>
 <body>
 
-    <div id="start-screen" onclick="initGame()">
+    <div id="start-screen">
         <h1>NIGHT SHIFT</h1>
-        <p>Click to Start</p>
+        <div id="start-night-display">Night 1</div>
+        <button class="menu-btn" onclick="initGame()">BẮT ĐẦU</button>
+        <button class="menu-btn" onclick="resetData()" style="font-size: 14px; width: 150px; border-color: #400; color: #844;">Xóa Dữ Liệu</button>
     </div>
 
     <div id="vignette"></div>
@@ -105,8 +111,7 @@
             <div class="hallway" id="left-hall">
                 <div class="door" id="door-left"></div>
                 <div class="light-overlay" id="light-left-overlay"></div>
-                <div class="animatronic-door" id="ai-left-visual">🐰</div>
-            </div>
+                <div class="animatronic-door" id="ai-left-visual">🐰</div> </div>
             
             <div class="control-panel left-panel">
                 <div class="btn btn-door" id="btn-door-left" onclick="toggleDoor('left')"></div>
@@ -114,6 +119,8 @@
             </div>
 
             <div id="right-window"><div id="window-character">🐔</div></div>
+            
+            <div id="golden-freddy-office">🐻</div>
 
             <div class="desk">
                 <div class="fan">❄️</div>
@@ -143,9 +150,6 @@
             <div style="color: #aaa;">Power: <span id="power-display" style="color: white;">100%</span></div>
             <div style="color: #aaa;">Usage: <span id="usage-display">🔋</span></div>
         </div>
-        <div id="dialogue-box">
-            <strong style="color:#aaa;">System:</strong><br><span id="dialogue-text"></span>
-        </div>
         <button id="cam-toggle" onclick="toggleCameras()">Mở Monitor</button>
     </div>
 
@@ -155,7 +159,6 @@
             <div id="cam-label">CAM 1A - Show Stage</div>
             <div id="cam-ai-visual"></div>
         </div>
-        
         <div id="map">
             <div class="cam-btn active" id="cam-1A" onclick="switchCam('1A', 'Show Stage')">1A</div>
             <div class="cam-btn" id="cam-1B" onclick="switchCam('1B', 'Dining Area')">1B</div>
@@ -170,94 +173,116 @@
     </div>
 
     <div id="jumpscare"><div id="jumpscare-icon"></div></div>
-    <div id="game-over">GAME OVER<br><button onclick="location.reload()" style="padding: 10px; font-size:20px; margin-top: 20px; cursor: pointer; background:#222; color:white; border:2px solid white;">Chơi Lại</button></div>
-    <div id="win-screen">6:00 AM<br>YOU SURVIVED<br><button onclick="location.reload()" style="padding: 10px; font-size:20px; margin-top: 20px; cursor: pointer;">Chơi Lại</button></div>
+    <div id="gf-jumpscare"><div id="gf-jumpscare-icon">🐻</div></div>
+    
+    <div id="game-over">GAME OVER<br><button onclick="location.reload()" style="padding: 10px; font-size:20px; margin-top: 20px; cursor: pointer; background:#222; color:white; border:2px solid white;">Thử Lại Đêm Này</button></div>
+    <div id="win-screen">
+        <span id="win-text">6:00 AM</span><br>
+        <span id="win-subtext" style="font-size:30px;">YOU SURVIVED</span><br>
+        <button onclick="location.reload()" style="padding: 10px; font-size:20px; margin-top: 20px; cursor: pointer; background:white; color:black;">Chơi Tiếp</button>
+    </div>
 
 <script>
-    // --- AUDIO SYSTEM ---
+    // --- 1. LOCAL STORAGE ---
+    let savedNight = parseInt(localStorage.getItem('fnaf_web_night')) || 1;
+    if (savedNight > 5) savedNight = 5; 
+    document.getElementById('start-night-display').innerText = `Đêm ${savedNight}`;
+    document.getElementById('night-display').innerText = `Night ${savedNight}`;
+
+    function resetData() {
+        if(confirm("Bạn có chắc chắn muốn xóa toàn bộ dữ liệu (Quay về Đêm 1)?")) {
+            localStorage.removeItem('fnaf_web_night'); location.reload();
+        }
+    }
+
+    // --- 2. AUDIO SYSTEM ---
     let audioCtx;
     let droneOsc;
+    let freddyMusicInterval;
+    let gfHallucinationOsc;
     
     function initAudio() {
         if(!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             droneOsc = audioCtx.createOscillator();
             let gainNode = audioCtx.createGain();
-            droneOsc.type = 'sine';
-            droneOsc.frequency.setValueAtTime(40, audioCtx.currentTime); 
+            droneOsc.type = 'sine'; droneOsc.frequency.setValueAtTime(40, audioCtx.currentTime); 
             gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            droneOsc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            droneOsc.connect(gainNode); gainNode.connect(audioCtx.destination);
             droneOsc.start();
-        } else if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        } else if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+    }
+
+    const toreadorNotes = [349.23, 349.23, 349.23, 293.66, 233.08, 293.66, 261.63, 261.63, 261.63, 220.00, 261.63, 293.66];
+    function playFreddyMusicBox() {
+        if(!audioCtx) return; let noteIdx = 0;
+        freddyMusicInterval = setInterval(() => {
+            let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.value = toreadorNotes[noteIdx];
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            noteIdx = (noteIdx + 1) % toreadorNotes.length;
+        }, 500); 
     }
 
     function playSound(type) {
         if(!audioCtx) return;
-        let osc = audioCtx.createOscillator();
-        let gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
         
-        if (type === 'click') {
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        } else if (type === 'door') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(50, audioCtx.currentTime + 0.3);
-            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        } else if (type === 'light') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(60, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        if (type === 'click' || type === 'door' || type === 'light') {
+            // Rút gọn các hàm cơ bản (vẫn giữ nguyên logic cũ)
+            osc.type = type==='click'?'square':(type==='door'?'triangle':'sawtooth');
+            let freq = type==='click'?400:(type==='door'?100:60);
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(type==='door'?0.5:0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
             osc.start(); osc.stop(audioCtx.currentTime + 0.2);
         } else if (type === 'jumpscare') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 1.5);
-            
-            let osc2 = audioCtx.createOscillator();
-            osc2.type = 'square';
+            let osc2 = audioCtx.createOscillator(); osc2.type = 'square';
             osc2.frequency.setValueAtTime(150, audioCtx.currentTime);
-            osc2.connect(gain);
-            osc2.start(); osc2.stop(audioCtx.currentTime + 2);
-            
+            osc2.connect(gain); osc2.start(); osc2.stop(audioCtx.currentTime + 2);
             gain.gain.setValueAtTime(1, audioCtx.currentTime); 
             osc.start(); osc.stop(audioCtx.currentTime + 2);
+        } else if (type === 'gf-hallucination') {
+            // Âm thanh trầm u ám khi Golden Freddy xuất hiện
+            gfHallucinationOsc = audioCtx.createOscillator();
+            gfHallucinationOsc.type = 'square'; gfHallucinationOsc.frequency.setValueAtTime(20, audioCtx.currentTime);
+            let distGain = audioCtx.createGain(); distGain.gain.setValueAtTime(2, audioCtx.currentTime);
+            gfHallucinationOsc.connect(distGain); distGain.connect(audioCtx.destination);
+            gfHallucinationOsc.start();
+        } else if (type === 'gf-crash') {
+            // Âm thanh chói tai làm crash game
+            osc.type = 'square'; osc.frequency.setValueAtTime(50, audioCtx.currentTime);
+            gain.gain.setValueAtTime(2, audioCtx.currentTime); // Cực to
+            osc.start(); osc.stop(audioCtx.currentTime + 3);
         }
     }
 
-    // --- GAME LOGIC ---
-    let state = { power: 100, timeHour: 12, night: 1, isCamOpen: false, doors: { left: false, right: false }, lights: { left: false, right: false }, currentCam: '1A', isPowerOut: false, gameActive: false };
+    // --- 3. GAME LOGIC ---
+    let state = { power: 100, timeHour: 12, night: savedNight, isCamOpen: false, doors: { left: false, right: false }, lights: { left: false, right: false }, currentCam: '1A', isPowerOut: false, gameActive: false, gfActive: false };
     let timeInSeconds = 0; const SECONDS_PER_HOUR = 45; 
-    let gameLoop, aiLoop;
+    let gameLoop, aiLoop, gfTimeout;
+
+    const AI_LIST = [
+        { name: 'Bonnie', icon: '🐰', side: 'left', position: 5, path: ['1A', '1B', '5', '2A', '2B', 'left_door'], level: 2 + savedNight },
+        { name: 'Chica', icon: '🐔', side: 'right', position: 4, path: ['1A', '1B', '4A', '4B', 'right_door'], level: 1 + savedNight }
+    ];
 
     function initGame() {
-        document.getElementById('start-screen').style.display = 'none';
-        initAudio();
+        document.getElementById('start-screen').style.display = 'none'; initAudio();
         state.gameActive = true;
-        
-        gameLoop = setInterval(gameTimerLoop, 1000);
-        aiLoop = setInterval(updateAI, 3000);
-        
+        gameLoop = setInterval(gameTimerLoop, 1000); aiLoop = setInterval(updateAI, 3000);
         updateCamVisuals();
     }
 
-    const office = document.getElementById('office');
-    let officeX = -30; 
+    const office = document.getElementById('office'); let officeX = -30; 
     document.addEventListener('mousemove', (e) => {
         if(state.isCamOpen || !state.gameActive || state.isPowerOut || e.target.id === 'cam-toggle') return;
-        
         const mouseX = e.clientX; const width = window.innerWidth; const panSpeed = 1.5;
         if (mouseX < width * 0.25) officeX += panSpeed; else if (mouseX > width * 0.75) officeX -= panSpeed;
         if (officeX > 0) officeX = 0; if (officeX < -60) officeX = -60; 
@@ -275,8 +300,7 @@
 
     function toggleDoor(side) {
         if(state.isPowerOut || !state.gameActive) return;
-        playSound('door');
-        state.doors[side] = !state.doors[side];
+        playSound('door'); state.doors[side] = !state.doors[side];
         document.getElementById(`door-${side}`).classList.toggle('closed');
         document.getElementById(`btn-door-${side}`).classList.toggle('active');
         updateUsageDisplay();
@@ -284,16 +308,11 @@
 
     function toggleLight(side, isTurnOn) {
         if(state.isPowerOut || !state.gameActive) return;
-        if(isTurnOn) playSound('light');
-        state.lights[side] = isTurnOn;
+        if(isTurnOn) playSound('light'); state.lights[side] = isTurnOn;
         const overlay = document.getElementById(`light-${side}-overlay`);
         const btn = document.getElementById(`btn-light-${side}`);
-        
-        if(isTurnOn) {
-            overlay.classList.add('active'); btn.classList.add('active');
-        } else {
-            overlay.classList.remove('active'); btn.classList.remove('active');
-        }
+        if(isTurnOn) { overlay.classList.add('active'); btn.classList.add('active'); } 
+        else { overlay.classList.remove('active'); btn.classList.remove('active'); }
         updateDoorVisuals(side); updateUsageDisplay();
     }
 
@@ -306,33 +325,74 @@
             visual.innerText = aiAtDoor.icon; visual.style.display = 'block';
             if(side === 'right') { winChar.innerText = aiAtDoor.icon; winChar.style.display = 'block'; }
         } else {
-            visual.style.display = 'none';
-            if(side === 'right') winChar.style.display = 'none';
+            visual.style.display = 'none'; if(side === 'right') winChar.style.display = 'none';
         }
+    }
+
+    // --- GOLDEN FREDDY MECHANIC ---
+    function triggerGoldenFreddy() {
+        state.gfActive = true;
+        document.getElementById('golden-freddy-office').style.display = 'block';
+        playSound('gf-hallucination');
+        
+        // Bạn có 2 giây để bật lại màn hình, nếu không...
+        gfTimeout = setTimeout(() => {
+            if (state.gfActive && !state.isCamOpen) {
+                executeGoldenFreddyJumpscare();
+            }
+        }, 2000);
+    }
+
+    function cancelGoldenFreddy() {
+        state.gfActive = false;
+        document.getElementById('golden-freddy-office').style.display = 'none';
+        clearTimeout(gfTimeout);
+        if(gfHallucinationOsc) { gfHallucinationOsc.stop(); gfHallucinationOsc = null; }
+    }
+
+    function executeGoldenFreddyJumpscare() {
+        state.gameActive = false;
+        clearInterval(gameLoop); clearInterval(aiLoop);
+        if(gfHallucinationOsc) { gfHallucinationOsc.stop(); gfHallucinationOsc = null; }
+        playSound('gf-crash');
+        
+        document.getElementById('camera-system').style.display = 'none';
+        document.getElementById('static-overlay').classList.add('heavy-static');
+        document.getElementById('gf-jumpscare').style.display = 'flex';
+        
+        // Tái tạo cảm giác Game Crash: Đứng hình 3 giây rồi reload trang
+        setTimeout(() => {
+            location.reload(); 
+        }, 3000);
     }
 
     function toggleCameras() {
         if(state.isPowerOut || !state.gameActive) return;
-        playSound('click');
+        playSound('click'); 
         state.isCamOpen = !state.isCamOpen;
+        
+        if (!state.isCamOpen) {
+            // Vừa HẠ camera xuống: Có tỉ lệ nhỏ xuất hiện Golden Freddy (5% cho dễ test)
+            if (Math.random() < 0.05 && !state.gfActive) {
+                triggerGoldenFreddy();
+            }
+        } else {
+            // Vừa MỞ camera lên: Thoát khỏi GF nếu hắn đang ở đó
+            if (state.gfActive) cancelGoldenFreddy();
+        }
+
         document.getElementById('camera-system').style.display = state.isCamOpen ? 'block' : 'none';
         document.getElementById('cam-toggle').innerText = state.isCamOpen ? "Đóng Monitor" : "Mở Monitor";
         updateUsageDisplay(); updateCamVisuals();
     }
 
     function switchCam(id, name) {
-        playSound('click');
-        state.currentCam = id;
+        playSound('click'); state.currentCam = id;
         document.getElementById('cam-label').innerText = `CAM ${id} - ${name}`;
         document.querySelectorAll('.cam-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`cam-${id}`).classList.add('active');
         updateCamVisuals();
     }
-
-    const AI_LIST = [
-        { name: 'Bonnie', icon: '🐰', side: 'left', position: 5, path: ['1A', '1B', '5', '2A', '2B', 'left_door'], level: 3 },
-        { name: 'Chica', icon: '🐔', side: 'right', position: 4, path: ['1A', '1B', '4A', '4B', 'right_door'], level: 2 }
-    ];
 
     function updateAI() {
         if(!state.gameActive || state.isPowerOut) return;
@@ -363,16 +423,13 @@
     function triggerJumpscare(icon) {
         state.gameActive = false;
         clearInterval(gameLoop); clearInterval(aiLoop);
+        if(freddyMusicInterval) clearInterval(freddyMusicInterval); 
         playSound('jumpscare');
         
         document.getElementById('camera-system').style.display = 'none';
-        
         const jumpScreen = document.getElementById('jumpscare');
-        const jumpIcon = document.getElementById('jumpscare-icon');
-        jumpIcon.innerText = icon;
-        
-        jumpScreen.style.display = 'none';
-        void jumpScreen.offsetWidth; 
+        document.getElementById('jumpscare-icon').innerText = icon;
+        jumpScreen.style.display = 'none'; void jumpScreen.offsetWidth; 
         jumpScreen.style.display = 'flex';
         
         setTimeout(() => {
@@ -388,10 +445,17 @@
             timeInSeconds = 0; state.timeHour++;
             if(state.timeHour === 13) state.timeHour = 1;
             document.getElementById('time-display').innerText = `${state.timeHour}:00 AM`;
-            AI_LIST.forEach(ai => ai.level++);
+            AI_LIST.forEach(ai => ai.level++); 
+            
             if (state.timeHour === 6) {
                 state.gameActive = false;
                 clearInterval(gameLoop); clearInterval(aiLoop);
+                if(state.night < 5) {
+                    localStorage.setItem('fnaf_web_night', state.night + 1);
+                    document.getElementById('win-subtext').innerText = `YOU SURVIVED NIGHT ${state.night}`;
+                } else {
+                    document.getElementById('win-subtext').innerText = `YOU BEAT NIGHT 5!`;
+                }
                 document.getElementById('win-screen').style.display = 'flex'; return;
             }
         }
@@ -403,12 +467,14 @@
         }
     }
 
+    // --- FREDDY POWER OUT MECHANIC ---
     function triggerPowerOut() {
         state.isPowerOut = true; state.isCamOpen = false;
         document.getElementById('camera-system').style.display = 'none';
         document.getElementById('cam-toggle').style.display = 'none';
-        playSound('door'); 
+        if(state.gfActive) cancelGoldenFreddy(); // Xóa GF nếu đang có
         
+        playSound('door'); 
         ['left', 'right'].forEach(side => {
             state.doors[side] = false;
             document.getElementById(`door-${side}`).classList.remove('closed');
@@ -420,10 +486,28 @@
         document.getElementById('vignette').style.background = 'rgba(0,0,0,0.95)';
         document.querySelector('.wall-texture').style.opacity = '0';
         document.getElementById('window-character').style.display = 'none'; 
-        
         if(droneOsc) { droneOsc.stop(); droneOsc = null; } 
         
-        setTimeout(() => { triggerJumpscare('🐻'); }, 5000 + Math.random() * 5000);
+        // 1. Giai đoạn 1: Freddy nhấp nháy ở cửa trái + Hát
+        const freddyFace = document.getElementById('ai-left-visual');
+        freddyFace.innerText = '🐻';
+        freddyFace.className = 'animatronic-door freddy-flashing'; // CSS nhấp nháy
+        playFreddyMusicBox();
+        
+        let musicDuration = 5000 + Math.random() * 7000;
+        
+        setTimeout(() => {
+            // 2. Giai đoạn 2: Nhạc dứt, mọi thứ chìm vào bóng tối
+            clearInterval(freddyMusicInterval);
+            freddyFace.className = 'animatronic-door'; 
+            freddyFace.style.display = 'none'; // Đen đặc
+            
+            // 3. Khoảng lặng im chết chóc (delay 2-5 giây)
+            setTimeout(() => {
+                triggerJumpscare('🐻');
+            }, 2000 + Math.random() * 3000);
+            
+        }, musicDuration);
     }
 </script>
 </body>

@@ -564,6 +564,14 @@ let gameLoop, aiLoop, gfTimeout;
 
 const AI_LIST = [
     {
+        name: 'Freddy',
+        icon: '🐻',
+        side: 'right',
+        position: 6,
+        path: ['1A', '1B', '7', '6', '4A', '4B', 'right_door'],
+        level: Math.max(0, savedNight - 2)
+    },
+    {
         name: 'Bonnie',
         icon: '🐰',
         side: 'left',
@@ -680,7 +688,6 @@ function isChicaInKitchen() {
     const chica = AI_LIST.find(ai => ai.name === 'Chica');
     if (!chica) return false;
     let room = chica.path[chica.path.length - 1 - chica.position];
-    if (chica.position === chica.path.length - 1) room = '1A';
     return room === '6';
 }
 
@@ -745,7 +752,7 @@ let officeX = -30;
 document.addEventListener('mousemove', e => {
     if (gameState.isCamOpen || !gameState.gameActive || gameState.isPowerOut) return;
     const pct = e.clientX / window.innerWidth;
-    officeX = -(pct * 60);
+    officeX = -15 - (pct * 30);
     DOM.office.style.transform = `translateX(${officeX}vw)`;
 });
 
@@ -1010,7 +1017,6 @@ function updateCamVisuals() {
     const icons = [];
     AI_LIST.forEach(ai => {
         let room = ai.path[ai.path.length - 1 - ai.position];
-        if (ai.position === ai.path.length - 1) room = '1A';
         if (room === gameState.currentCam) icons.push(ai.icon);
     });
     DOM.camAiVisual.innerText = icons.join(' ');

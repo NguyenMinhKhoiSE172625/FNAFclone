@@ -7,7 +7,6 @@
     <style>
         body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background-color:#000;color:#fff;font-family:'Courier New',Courier,monospace;user-select:none}
         
-        /* HIỆU ỨNG FISH-EYE & LENS (CRT Màn hình lồi) */
         #lens-effect {position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%);box-shadow:inset 0 0 100px rgba(0,0,0,1);pointer-events:none;z-index:45;}
         .crt-lines {position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);background-size:100% 4px;pointer-events:none;z-index:46;opacity:0.6;}
         
@@ -67,29 +66,40 @@
         #camera-system{position:absolute;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,rgba(0,0,0,.95),rgba(0,0,0,.95) 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 4px);z-index:60;display:none;pointer-events:auto}
         #cam-view{position:absolute;top:5%;left:5%;width:60%;height:75%;border:3px solid #777;display:flex;justify-content:center;align-items:center;background:#0a0a0a;box-shadow:0 0 50px rgba(0,0,0,.8);position:relative;overflow:hidden}
         
-        /* HIỆU ỨNG NHIỄU ĐỘNG (ANIMATED STATIC) CHO BACKGROUND CAMERA */
         .cam-noise{position:absolute;top:-10%;left:-10%;width:120%;height:120%;background:url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.15"/%3E%3C/svg%3E');pointer-events:none;animation:tv-static 0.3s steps(2) infinite;}
-        @keyframes tv-static {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-5px, 5px); }
-            50% { transform: translate(5px, -5px); }
-            75% { transform: translate(-5px, -5px); }
-            100% { transform: translate(5px, 5px); }
-        }
+        @keyframes tv-static { 0%{transform:translate(0,0)} 25%{transform:translate(-5px,5px)} 50%{transform:translate(5px,-5px)} 75%{transform:translate(-5px,-5px)} 100%{transform:translate(5px,5px)} }
 
-        /* LỚP CHỚP NHIỄU HẠT KHI MỞ CAM & ĐỔI CAM (STATIC BURST) */
-        #monitor-static-burst {position:absolute;top:0;left:0;width:100%;height:100%;background:url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.8"/%3E%3C/svg%3E');background-color:#fff;mix-blend-mode:difference;z-index:250;display:none;pointer-events:none;}
+        /* ĐÃ SỬA: Hiệu ứng cuộn các thanh trắng chớp nhoáng chuẩn FNAF */
+        #monitor-static-burst {
+            position:absolute;top:0;left:0;width:100%;height:100%;
+            background: repeating-linear-gradient(0deg, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.85) 80px, transparent 80px, transparent 160px);
+            background-size: 100% 320px;
+            animation: scanline-burst 0.1s linear infinite;
+            z-index:250; display:none; pointer-events:none;
+        }
+        @keyframes scanline-burst { 0%{background-position:0 0} 100%{background-position:0 320px} }
 
         #cam-label{position:absolute;top:20px;left:20px;font-size:24px;z-index:2;color:#fff;background:rgba(0,0,0,0.5);padding:5px;}
         #cam-ai-visual{font-size:120px;filter:grayscale(80%) brightness(.7);z-index:1;text-shadow:0 0 30px #000;transition:.3s}
         
+        /* ĐÃ SỬA: Map chuẩn kích thước, vị trí nút độc lập, chống đè lên nhau */
         #map{position:absolute;bottom:60px;right:30px;width:350px;height:350px;border:2px solid #555;background:rgba(0,0,0,.8);pointer-events:auto}
-        .cam-btn{position:absolute;background:rgba(30,30,30,.8);color:#888;border:1px solid #666;cursor:pointer;font-size:12px;width:50px;height:35px;text-align:center;transition:.1s;display:flex;justify-content:center;align-items:center}
+        .cam-btn{position:absolute;background:rgba(30,30,30,.8);color:#888;border:1px solid #666;cursor:pointer;font-size:12px;width:55px;height:40px;text-align:center;transition:.1s;display:flex;justify-content:center;align-items:center; box-sizing: border-box;}
         .cam-btn:hover,.cam-btn.active{background:#ddd;color:#000;font-weight:700;border-color:#fff}
-        #cam-1A{top:30px;left:110px;width:70px} #cam-1B{top:80px;left:80px;width:120px;height:60px} #cam-1C{top:150px;left:60px;width:70px} 
-        #cam-5{top:80px;left:10px} #cam-7{top:80px;right:30px} #cam-6{top:180px;right:30px;width:70px} #cam-3{top:180px;left:10px} 
-        #cam-2A{top:180px;left:90px;height:60px} #cam-2B{top:250px;left:90px} #cam-4A{top:180px;right:110px;height:60px} #cam-4B{top:250px;right:110px} 
-        .you-are-here{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:70px;height:25px;background:#111;border:2px solid #600;color:#d00;font-size:11px;display:flex;justify-content:center;align-items:center;font-weight:700}
+        
+        /* Tọa độ Pixel Fix cứng - Sẽ không bao giờ bị lệch */
+        #cam-1A{top:15px;left:147px} 
+        #cam-1B{top:65px;left:147px} 
+        #cam-1C{top:125px;left:90px} 
+        #cam-5{top:90px;left:20px} 
+        #cam-7{top:90px;right:20px} 
+        #cam-3{top:190px;left:30px} 
+        #cam-2A{top:190px;left:100px} 
+        #cam-2B{top:250px;left:100px} 
+        #cam-4A{top:190px;right:100px} 
+        #cam-4B{top:250px;right:100px} 
+        #cam-6{top:190px;right:20px} 
+        .you-are-here{position:absolute;bottom:15px;left:140px;width:70px;height:25px;background:#111;border:2px solid #600;color:#d00;font-size:11px;display:flex;justify-content:center;align-items:center;font-weight:700}
 
         #game-over,#gf-jumpscare,#jumpscare,#win-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;z-index:200;display:none;justify-content:center;align-items:center;font-size:50px;flex-direction:column}
         #jumpscare-icon{display:inline-block;filter:drop-shadow(0 0 50px red) contrast(150%);animation:jump-zoom .5s cubic-bezier(.1,0,0,1) forwards,fast-shake .05s infinite}
@@ -133,7 +143,9 @@
     <div class="crt-lines"></div>
     <div id="vignette"></div>
     <div id="static-overlay"></div>
-    <div id="monitor-static-burst"></div> <div id="viewport">
+    <div id="monitor-static-burst"></div> 
+
+    <div id="viewport">
         <div id="office">
             <div class="wall-texture"></div>
             <div class="floor"></div>
@@ -211,351 +223,7 @@
     <div id="win-screen"><span id="win-text">6:00 AM</span><br><span id="win-subtext" style="font-size:30px">YOU SURVIVED</span><br><button onclick="location.reload()" style="padding:10px;font-size:20px;margin-top:20px;cursor:pointer;background:#fff;color:#000">Continue</button></div>
 
     <script>
-        // --- DATA & AUDIO INITIALIZATION ---
-        let savedNight = parseInt(localStorage.getItem('fnaf_web_night')) || 1;
-        if (savedNight > 5) savedNight = 5; 
-        document.getElementById('start-night-display').innerText = `Night ${savedNight}`;
-        document.getElementById('night-display').innerText = `Night ${savedNight}`;
-
-        function resetData() {
-            if(confirm("Are you sure you want to erase all data (Return to Night 1)?")){
-                localStorage.removeItem('fnaf_web_night'); 
-                location.reload();
-            }
-        }
-
-        let audioCtx, droneOsc, freddyMusicInterval, gfHallucinationOsc;
-        function initAudio(){
-            if(!audioCtx){
-                audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-                droneOsc = audioCtx.createOscillator();
-                let e = audioCtx.createGain();
-                droneOsc.type = 'sine';
-                droneOsc.frequency.setValueAtTime(40, audioCtx.currentTime);
-                e.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                droneOsc.connect(e);
-                e.connect(audioCtx.destination);
-                droneOsc.start();
-            } else if(audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
-        const toreadorNotes = [349.23, 349.23, 349.23, 293.66, 233.08, 293.66, 261.63, 261.63, 261.63, 220, 261.63, 293.66];
-        function playFreddyMusicBox(){
-            if(!audioCtx) return; 
-            let e = 0;
-            freddyMusicInterval = setInterval(() => {
-                let t = audioCtx.createOscillator(), n = audioCtx.createGain();
-                t.type = 'sine'; 
-                t.frequency.value = toreadorNotes[e];
-                t.connect(n); 
-                n.connect(audioCtx.destination);
-                n.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                n.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                t.start(); t.stop(audioCtx.currentTime + 0.4);
-                e = (e + 1) % toreadorNotes.length;
-            }, 500);
-        }
-
-        function playSound(e){
-            if(!audioCtx) return;
-            let t = audioCtx.createOscillator(), n = audioCtx.createGain();
-            t.connect(n); n.connect(audioCtx.destination);
-            
-            if('click' === e || 'door' === e || 'light' === e){
-                t.type = 'click' === e ? 'square' : 'door' === e ? 'triangle' : 'sawtooth';
-                let i = 'click' === e ? 400 : 'door' === e ? 100 : 60;
-                t.frequency.setValueAtTime(i, audioCtx.currentTime);
-                n.gain.setValueAtTime('door' === e ? 0.5 : 0.1, audioCtx.currentTime);
-                n.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                t.start(); t.stop(audioCtx.currentTime + 0.2);
-            } else if('jumpscare' === e){
-                t.type = 'sawtooth';
-                t.frequency.setValueAtTime(100, audioCtx.currentTime);
-                t.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 1.5);
-                let i = audioCtx.createOscillator();
-                i.type = 'square';
-                i.frequency.setValueAtTime(150, audioCtx.currentTime);
-                i.connect(n); i.start(); i.stop(audioCtx.currentTime + 2);
-                n.gain.setValueAtTime(1, audioCtx.currentTime);
-                t.start(); t.stop(audioCtx.currentTime + 2);
-            } else if('gf-hallucination' === e){
-                gfHallucinationOsc = audioCtx.createOscillator();
-                gfHallucinationOsc.type = 'square';
-                gfHallucinationOsc.frequency.setValueAtTime(20, audioCtx.currentTime);
-                let i = audioCtx.createGain();
-                i.gain.setValueAtTime(2, audioCtx.currentTime);
-                gfHallucinationOsc.connect(i);
-                i.connect(audioCtx.destination);
-                gfHallucinationOsc.start();
-            } else if('gf-crash' === e){
-                t.type = 'square';
-                t.frequency.setValueAtTime(50, audioCtx.currentTime);
-                n.gain.setValueAtTime(2, audioCtx.currentTime);
-                t.start(); t.stop(audioCtx.currentTime + 3);
-            } else if ('static' === e) {
-                // Tiếng xẹt khi đổi camera
-                t.type = 'sawtooth';
-                t.frequency.setValueAtTime(100, audioCtx.currentTime);
-                n.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                n.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-                t.start(); t.stop(audioCtx.currentTime + 0.15);
-            }
-        }
-
-        // --- GAME STATE ---
-        let state = {power: 100, timeHour: 12, night: savedNight, isCamOpen: false, doors: {left: false, right: false}, lights: {left: false, right: false}, currentCam: '1A', isPowerOut: false, gameActive: false, gfActive: false};
-        let timeInSeconds = 0; 
-        const SECONDS_PER_HOUR = 45; 
-        let gameLoop, aiLoop, gfTimeout;
-        
-        const AI_LIST = [
-            {name: 'Bonnie', icon: '🐰', side: 'left', position: 6, path: ['1A','1B','5','1C','2A','2B','left_door'], level: 2 + savedNight},
-            {name: 'Chica', icon: '🐔', side: 'right', position: 6, path: ['1A','1B','7','6','4A','4B','right_door'], level: 1 + savedNight}
-        ];
-
-        // --- GAME START FLOW ---
-        function showInstructions() {
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('instruction-screen').style.display = 'flex';
-            initAudio();
-        }
-        
-        function startGameplay() {
-            document.getElementById('instruction-screen').style.display = 'none';
-            state.gameActive = true;
-            gameLoop = setInterval(gameTimerLoop, 1000);
-            aiLoop = setInterval(updateAI, 3000);
-            updateCamVisuals();
-        }
-
-        // --- CONTROLS ---
-        const office = document.getElementById('office');
-        let officeX = -30;
-        
-        document.addEventListener('mousemove', e => {
-            if(state.isCamOpen || !state.gameActive || state.isPowerOut || 'cam-toggle' === e.target.id) return;
-            let t = e.clientX, n = window.innerWidth, i = 1.5;
-            if(t < n * 0.25) officeX += i;
-            else if(t > n * 0.75) officeX -= i;
-            if(officeX > 0) officeX = 0;
-            if(officeX < -60) officeX = -60;
-            office.style.transform = `translateX(${officeX}vw)`;
-        });
-
-        function updateUsageDisplay() {
-            let e = 1;
-            if(state.doors.left) e++; if(state.doors.right) e++;
-            if(state.lights.left) e++; if(state.lights.right) e++;
-            if(state.isCamOpen) e++;
-            let t = "";
-            for(let n = 0; n < e; n++) t += "🔋";
-            document.getElementById('usage-display').innerText = t;
-            return e;
-        }
-
-        function toggleDoor(e) {
-            if(state.isPowerOut || !state.gameActive) return;
-            playSound('door');
-            state.doors[e] = !state.doors[e];
-            document.getElementById(`door-${e}`).classList.toggle('closed');
-            document.getElementById(`btn-door-${e}`).classList.toggle('active');
-            updateDoorVisuals(e);
-            updateUsageDisplay();
-        }
-
-        function toggleLight(e, t) {
-            if(state.isPowerOut || !state.gameActive) return;
-            if(t) playSound('light');
-            state.lights[e] = t;
-            let n = document.getElementById(`light-${e}-overlay`), i = document.getElementById(`btn-light-${e}`);
-            if(t) { n.classList.add('active'); i.classList.add('active'); } 
-            else { n.classList.remove('active'); i.classList.remove('active'); }
-            updateDoorVisuals(e);
-            updateUsageDisplay();
-        }
-
-        function updateDoorVisuals(e) {
-            let t = AI_LIST.find(t => t.side === e && 0 === t.position), 
-                n = document.getElementById(`ai-${e}-visual`), 
-                i = document.getElementById('window-character');
-            if(state.lights[e] && t && !state.doors[e]) {
-                n.innerText = t.icon; n.style.display = 'block';
-                if('right' === e) { i.innerText = t.icon; i.style.display = 'block'; }
-            } else {
-                n.style.display = 'none'; 
-                if('right' === e) i.style.display = 'none';
-            }
-        }
-
-        // HÀM GỌI CHỚP NHIỄU HẠT (STATIC BURST)
-        function triggerStaticBurst() {
-            const burst = document.getElementById('monitor-static-burst');
-            burst.style.display = 'block';
-            playSound('static');
-            setTimeout(() => burst.style.display = 'none', 150);
-        }
-
-        function toggleCameras() {
-            if(state.isPowerOut || !state.gameActive) return;
-            playSound('click');
-            state.isCamOpen = !state.isCamOpen;
-            
-            if(!state.isCamOpen) {
-                // Đóng Cam
-                if(Math.random() < 0.05 && !state.gfActive) triggerGoldenFreddy();
-            } else {
-                // Mở Cam -> Chớp nhiễu
-                triggerStaticBurst();
-                if(state.gfActive) cancelGoldenFreddy();
-            }
-
-            document.getElementById('camera-system').style.display = state.isCamOpen ? 'block' : 'none';
-            document.getElementById('cam-toggle').innerText = state.isCamOpen ? "Close Monitor" : "Open Monitor";
-            updateUsageDisplay();
-            updateCamVisuals();
-        }
-
-        function switchCam(e, t) {
-            playSound('click');
-            triggerStaticBurst(); // Chuyển phòng cũng bị chớp nhiễu hạt
-            state.currentCam = e;
-            document.getElementById('cam-label').innerText = `CAM ${e} - ${t}`;
-            document.querySelectorAll('.cam-btn').forEach(e => e.classList.remove('active'));
-            document.getElementById(`cam-${e}`).classList.add('active');
-            updateCamVisuals();
-        }
-
-        // --- AI LOGIC ---
-        function updateAI() {
-            if(!state.gameActive || state.isPowerOut) return;
-            AI_LIST.forEach(e => {
-                let t = Math.floor(Math.random() * 20) + 1;
-                if(t <= e.level) {
-                    if(e.position > 0) { e.position--; } 
-                    else if(0 === e.position) {
-                        if(state.doors[e.side]) { e.position = Math.floor(Math.random() * 2) + 1; } 
-                        else { triggerJumpscare(e.icon); }
-                    }
-                }
-            });
-            updateCamVisuals(); updateDoorVisuals('left'); updateDoorVisuals('right');
-        }
-
-        function updateCamVisuals() {
-            if(!state.isCamOpen) return;
-            if('6' === state.currentCam) {
-                document.getElementById('cam-ai-visual').innerText = "[AUDIO ONLY]";
-                return;
-            }
-            let e = [];
-            AI_LIST.forEach(t => {
-                let n = t.path[t.path.length - 1 - t.position];
-                if(t.position === t.path.length - 1) n = '1A';
-                if(n === state.currentCam) e.push(t.icon);
-            });
-            document.getElementById('cam-ai-visual').innerText = e.join(" ");
-        }
-
-        // --- JUMPSCARES ---
-        function triggerGoldenFreddy() {
-            state.gfActive = true;
-            document.getElementById('golden-freddy-office').style.display = 'block';
-            playSound('gf-hallucination');
-            gfTimeout = setTimeout(() => {
-                if(state.gfActive && !state.isCamOpen) executeGoldenFreddyJumpscare();
-            }, 2000);
-        }
-
-        function cancelGoldenFreddy() {
-            state.gfActive = false;
-            document.getElementById('golden-freddy-office').style.display = 'none';
-            clearTimeout(gfTimeout);
-            if(gfHallucinationOsc){ gfHallucinationOsc.stop(); gfHallucinationOsc = null; }
-        }
-
-        function executeGoldenFreddyJumpscare() {
-            state.gameActive = false;
-            clearInterval(gameLoop); clearInterval(aiLoop);
-            if(gfHallucinationOsc){ gfHallucinationOsc.stop(); gfHallucinationOsc = null; }
-            playSound('gf-crash');
-            document.getElementById('camera-system').style.display = 'none';
-            document.getElementById('static-overlay').classList.add('heavy-static');
-            document.getElementById('gf-jumpscare').style.display = 'flex';
-            setTimeout(() => { location.reload(); }, 3000);
-        }
-
-        function triggerJumpscare(e) {
-            state.gameActive = false;
-            clearInterval(gameLoop); clearInterval(aiLoop);
-            if(freddyMusicInterval) clearInterval(freddyMusicInterval);
-            playSound('jumpscare');
-            document.getElementById('camera-system').style.display = 'none';
-            let t = document.getElementById('jumpscare');
-            document.getElementById('jumpscare-icon').innerText = e;
-            t.style.display = 'none'; void t.offsetWidth; t.style.display = 'flex';
-            setTimeout(() => { t.style.display = 'none'; document.getElementById('game-over').style.display = 'flex'; }, 1500);
-        }
-
-        // --- CORE LOOP ---
-        function gameTimerLoop() {
-            if(!state.gameActive) return;
-            timeInSeconds++;
-            if(timeInSeconds >= SECONDS_PER_HOUR) {
-                timeInSeconds = 0; state.timeHour++;
-                if(13 === state.timeHour) state.timeHour = 1;
-                document.getElementById('time-display').innerText = `${state.timeHour}:00 AM`;
-                AI_LIST.forEach(e => e.level++);
-                if(6 === state.timeHour) {
-                    state.gameActive = false;
-                    clearInterval(gameLoop); clearInterval(aiLoop);
-                    if(state.night < 5) {
-                        localStorage.setItem('fnaf_web_night', state.night + 1);
-                        document.getElementById('win-subtext').innerText = `YOU SURVIVED NIGHT ${state.night}`;
-                    } else {
-                        document.getElementById('win-subtext').innerText = `YOU BEAT NIGHT 5!`;
-                    }
-                    document.getElementById('win-screen').style.display = 'flex'; return;
-                }
-            }
-            if(!state.isPowerOut) {
-                let e = updateUsageDisplay() * 0.15; state.power -= e;
-                if(state.power <= 0) { state.power = 0; triggerPowerOut(); }
-                let t = state.power < 20 ? 'red' : 'white';
-                document.getElementById('power-display').innerHTML = `<span style="color:${t}">${Math.floor(state.power)}%</span>`;
-            }
-        }
-
-        function triggerPowerOut() {
-            state.isPowerOut = true; state.isCamOpen = false;
-            document.getElementById('camera-system').style.display = 'none';
-            document.getElementById('cam-toggle').style.display = 'none';
-            if(state.gfActive) cancelGoldenFreddy();
-            playSound('door');
-            ['left','right'].forEach(e => {
-                state.doors[e] = false;
-                document.getElementById(`door-${e}`).classList.remove('closed');
-                document.getElementById(`btn-door-${e}`).classList.remove('active');
-                toggleLight(e, false);
-            });
-            document.getElementById('office').style.background = '#000';
-            document.getElementById('vignette').style.background = 'rgba(0,0,0,0.95)';
-            document.querySelector('.wall-texture').style.opacity = '0';
-            document.getElementById('window-character').style.display = 'none';
-            if(droneOsc){ droneOsc.stop(); droneOsc = null; }
-            
-            let e = document.getElementById('ai-left-visual');
-            e.innerText = '🐻'; e.className = 'animatronic-door freddy-flashing';
-            playFreddyMusicBox();
-            
-            let t = 5000 + Math.random() * 7000;
-            setTimeout(() => {
-                clearInterval(freddyMusicInterval);
-                e.className = 'animatronic-door'; e.style.display = 'none';
-                setTimeout(() => { triggerJumpscare('🐻') }, 2000 + Math.random() * 3000);
-            }, t);
-        }
+        let savedNight=parseInt(localStorage.getItem('fnaf_web_night'))||1;if(savedNight>5)savedNight=5;document.getElementById('start-night-display').innerText=`Night ${savedNight}`;document.getElementById('night-display').innerText=`Night ${savedNight}`;function resetData(){if(confirm("Are you sure you want to erase all data (Return to Night 1)?")){localStorage.removeItem('fnaf_web_night');location.reload()}}let audioCtx,droneOsc,freddyMusicInterval,gfHallucinationOsc;function initAudio(){if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();droneOsc=audioCtx.createOscillator();let e=audioCtx.createGain();droneOsc.type='sine';droneOsc.frequency.setValueAtTime(40,audioCtx.currentTime);e.gain.setValueAtTime(.5,audioCtx.currentTime);droneOsc.connect(e);e.connect(audioCtx.destination);droneOsc.start()}else if(audioCtx.state==='suspended')audioCtx.resume()}const toreadorNotes=[349.23,349.23,349.23,293.66,233.08,293.66,261.63,261.63,261.63,220,261.63,293.66];function playFreddyMusicBox(){if(!audioCtx)return;let e=0;freddyMusicInterval=setInterval(()=>{let t=audioCtx.createOscillator(),n=audioCtx.createGain();t.type='sine';t.frequency.value=toreadorNotes[e];t.connect(n);n.connect(audioCtx.destination);n.gain.setValueAtTime(.3,audioCtx.currentTime);n.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.4);t.start();t.stop(audioCtx.currentTime+.4);e=(e+1)%toreadorNotes.length},500)}function playSound(e){if(!audioCtx)return;let t=audioCtx.createOscillator(),n=audioCtx.createGain();t.connect(n);n.connect(audioCtx.destination);if('click'===e||'door'===e||'light'===e){t.type='click'===e?'square':'door'===e?'triangle':'sawtooth';let i='click'===e?400:'door'===e?100:60;t.frequency.setValueAtTime(i,audioCtx.currentTime);n.gain.setValueAtTime('door'===e?.5:.1,audioCtx.currentTime);n.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.2);t.start();t.stop(audioCtx.currentTime+.2)}else if('jumpscare'===e){t.type='sawtooth';t.frequency.setValueAtTime(100,audioCtx.currentTime);t.frequency.exponentialRampToValueAtTime(800,audioCtx.currentTime+1.5);let i=audioCtx.createOscillator();i.type='square';i.frequency.setValueAtTime(150,audioCtx.currentTime);i.connect(n);i.start();i.stop(audioCtx.currentTime+2);n.gain.setValueAtTime(1,audioCtx.currentTime);t.start();t.stop(audioCtx.currentTime+2)}else if('gf-hallucination'===e){gfHallucinationOsc=audioCtx.createOscillator();gfHallucinationOsc.type='square';gfHallucinationOsc.frequency.setValueAtTime(20,audioCtx.currentTime);let i=audioCtx.createGain();i.gain.setValueAtTime(2,audioCtx.currentTime);gfHallucinationOsc.connect(i);i.connect(audioCtx.destination);gfHallucinationOsc.start()}else if('gf-crash'===e){t.type='square';t.frequency.setValueAtTime(50,audioCtx.currentTime);n.gain.setValueAtTime(2,audioCtx.currentTime);t.start();t.stop(audioCtx.currentTime+3)}else if('static'===e){t.type='sawtooth';t.frequency.setValueAtTime(100,audioCtx.currentTime);n.gain.setValueAtTime(.2,audioCtx.currentTime);n.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.15);t.start();t.stop(audioCtx.currentTime+.15)}}let state={power:100,timeHour:12,night:savedNight,isCamOpen:!1,doors:{left:!1,right:!1},lights:{left:!1,right:!1},currentCam:'1A',isPowerOut:!1,gameActive:!1,gfActive:!1},timeInSeconds=0;const SECONDS_PER_HOUR=45;let gameLoop,aiLoop,gfTimeout;const AI_LIST=[{name:'Bonnie',icon:'🐰',side:'left',position:6,path:['1A','1B','5','1C','2A','2B','left_door'],level:2+savedNight},{name:'Chica',icon:'🐔',side:'right',position:6,path:['1A','1B','7','6','4A','4B','right_door'],level:1+savedNight}];function showInstructions(){document.getElementById('start-screen').style.display='none';document.getElementById('instruction-screen').style.display='flex';initAudio()}function startGameplay(){document.getElementById('instruction-screen').style.display='none';state.gameActive=!0;gameLoop=setInterval(gameTimerLoop,1e3);aiLoop=setInterval(updateAI,3e3);updateCamVisuals()}const office=document.getElementById('office');let officeX=-30;document.addEventListener('mousemove',e=>{if(state.isCamOpen||!state.gameActive||state.isPowerOut||'cam-toggle'===e.target.id)return;let t=e.clientX,n=window.innerWidth,i=1.5;if(t<n*.25)officeX+=i;else if(t>n*.75)officeX-=i;if(officeX>0)officeX=0;if(officeX<-60)officeX=-60;office.style.transform=`translateX(${officeX}vw)`});function updateUsageDisplay(){let e=1;if(state.doors.left)e++;if(state.doors.right)e++;if(state.lights.left)e++;if(state.lights.right)e++;if(state.isCamOpen)e++;let t="";for(let n=0;n<e;n++)t+="🔋";document.getElementById('usage-display').innerText=t;return e}function toggleDoor(e){if(state.isPowerOut||!state.gameActive)return;playSound('door');state.doors[e]=!state.doors[e];document.getElementById(`door-${e}`).classList.toggle('closed');document.getElementById(`btn-door-${e}`).classList.toggle('active');updateDoorVisuals(e);updateUsageDisplay()}function toggleLight(e,t){if(state.isPowerOut||!state.gameActive)return;if(t)playSound('light');state.lights[e]=t;let n=document.getElementById(`light-${e}-overlay`),i=document.getElementById(`btn-light-${e}`);if(t){n.classList.add('active');i.classList.add('active')}else{n.classList.remove('active');i.classList.remove('active')}updateDoorVisuals(e);updateUsageDisplay()}function updateDoorVisuals(e){let t=AI_LIST.find(t=>t.side===e&&0===t.position),n=document.getElementById(`ai-${e}-visual`),i=document.getElementById('window-character');if(state.lights[e]&&t&&!state.doors[e]){n.innerText=t.icon;n.style.display='block';if('right'===e){i.innerText=t.icon;i.style.display='block'}}else{n.style.display='none';if('right'===e)i.style.display='none'}}function triggerStaticBurst(){let e=document.getElementById('monitor-static-burst');e.style.display='block';playSound('static');setTimeout(()=>e.style.display='none',200)}function triggerGoldenFreddy(){state.gfActive=!0;document.getElementById('golden-freddy-office').style.display='block';playSound('gf-hallucination');gfTimeout=setTimeout(()=>{if(state.gfActive&&!state.isCamOpen)executeGoldenFreddyJumpscare()},2e3)}function cancelGoldenFreddy(){state.gfActive=!1;document.getElementById('golden-freddy-office').style.display='none';clearTimeout(gfTimeout);if(gfHallucinationOsc){gfHallucinationOsc.stop();gfHallucinationOsc=null}}function executeGoldenFreddyJumpscare(){state.gameActive=!1;clearInterval(gameLoop);clearInterval(aiLoop);if(gfHallucinationOsc){gfHallucinationOsc.stop();gfHallucinationOsc=null}playSound('gf-crash');document.getElementById('camera-system').style.display='none';document.getElementById('static-overlay').classList.add('heavy-static');document.getElementById('gf-jumpscare').style.display='flex';setTimeout(()=>{location.reload()},3e3)}function toggleCameras(){if(state.isPowerOut||!state.gameActive)return;playSound('click');state.isCamOpen=!state.isCamOpen;if(!state.isCamOpen){if(Math.random()<.05&&!state.gfActive)triggerGoldenFreddy()}else{triggerStaticBurst();if(state.gfActive)cancelGoldenFreddy()}document.getElementById('camera-system').style.display=state.isCamOpen?'block':'none';document.getElementById('cam-toggle').innerText=state.isCamOpen?"Close Monitor":"Open Monitor";updateUsageDisplay();updateCamVisuals()}function switchCam(e,t){playSound('click');triggerStaticBurst();state.currentCam=e;document.getElementById('cam-label').innerText=`CAM ${e} - ${t}`;document.querySelectorAll('.cam-btn').forEach(e=>e.classList.remove('active'));document.getElementById(`cam-${e}`).classList.add('active');updateCamVisuals()}function updateAI(){if(!state.gameActive||state.isPowerOut)return;AI_LIST.forEach(e=>{let t=Math.floor(Math.random()*20)+1;if(t<=e.level){if(e.position>0){e.position--}else if(0===e.position){if(state.doors[e.side]){e.position=Math.floor(Math.random()*2)+1}else{triggerJumpscare(e.icon)}}}});updateCamVisuals();updateDoorVisuals('left');updateDoorVisuals('right')}function updateCamVisuals(){if(!state.isCamOpen)return;if('6'===state.currentCam){document.getElementById('cam-ai-visual').innerText="[AUDIO ONLY]";return}let e=[];AI_LIST.forEach(t=>{let n=t.path[t.path.length-1-t.position];if(t.position===t.path.length-1)n='1A';if(n===state.currentCam)e.push(t.icon)});document.getElementById('cam-ai-visual').innerText=e.join(" ")}function triggerJumpscare(e){state.gameActive=!1;clearInterval(gameLoop);clearInterval(aiLoop);if(freddyMusicInterval)clearInterval(freddyMusicInterval);playSound('jumpscare');document.getElementById('camera-system').style.display='none';let t=document.getElementById('jumpscare');document.getElementById('jumpscare-icon').innerText=e;t.style.display='none';void t.offsetWidth;t.style.display='flex';setTimeout(()=>{t.style.display='none';document.getElementById('game-over').style.display='flex'},1500)}function gameTimerLoop(){if(!state.gameActive)return;timeInSeconds++;if(timeInSeconds>=SECONDS_PER_HOUR){timeInSeconds=0;state.timeHour++;if(13===state.timeHour)state.timeHour=1;document.getElementById('time-display').innerText=`${state.timeHour}:00 AM`;AI_LIST.forEach(e=>e.level++);if(6===state.timeHour){state.gameActive=!1;clearInterval(gameLoop);clearInterval(aiLoop);if(state.night<5){localStorage.setItem('fnaf_web_night',state.night+1);document.getElementById('win-subtext').innerText=`YOU SURVIVED NIGHT ${state.night}`}else{document.getElementById('win-subtext').innerText=`YOU BEAT NIGHT 5!`}document.getElementById('win-screen').style.display='flex';return}}if(!state.isPowerOut){let e=updateUsageDisplay()*.15;state.power-=e;if(state.power<=0){state.power=0;triggerPowerOut()}let t=state.power<20?'red':'white';document.getElementById('power-display').innerHTML=`<span style="color:${t}">${Math.floor(state.power)}%</span>`}}function triggerPowerOut(){state.isPowerOut=!0;state.isCamOpen=!1;document.getElementById('camera-system').style.display='none';document.getElementById('cam-toggle').style.display='none';if(state.gfActive)cancelGoldenFreddy();playSound('door');['left','right'].forEach(e=>{state.doors[e]=!1;document.getElementById(`door-${e}`).classList.remove('closed');document.getElementById(`btn-door-${e}`).classList.remove('active');toggleLight(e,!1)});document.getElementById('office').style.background='#000';document.getElementById('vignette').style.background='rgba(0,0,0,0.95)';document.querySelector('.wall-texture').style.opacity='0';document.getElementById('window-character').style.display='none';if(droneOsc){droneOsc.stop();droneOsc=null}let e=document.getElementById('ai-left-visual');e.innerText='🐻';e.className='animatronic-door freddy-flashing';playFreddyMusicBox();let t=5e3+Math.random()*7e3;setTimeout(()=>{clearInterval(freddyMusicInterval);e.className='animatronic-door';e.style.display='none';setTimeout(()=>{triggerJumpscare('🐻')},2e3+Math.random()*3e3)},t)}
     </script>
 </body>
 </html>

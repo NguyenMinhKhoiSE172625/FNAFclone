@@ -57,7 +57,7 @@
         .btn{width:45px;height:45px;border-radius:5px;cursor:pointer;border:3px solid #000;transition:.1s}
         .btn-door{background:#6a0000}.btn-door.active{background:#ff3333;box-shadow:0 0 15px #f00}
         .btn-light{background:#776600}.btn-light.active{background:#ffff66;box-shadow:0 0 15px #ff0}
-        .animatronic-door{position:absolute;font-size:80px;display:none;filter:drop-shadow(0 0 20px #000) brightness(.6)}
+        .animatronic-door {position: absolute;bottom: 0px;width: 90%;height: auto;object-fit: contain;display: none;filter: drop-shadow(0 0 15px rgba(0,0,0,0.8)) brightness(0.7);z-index: 2;}
         .freddy-flashing{display:block!important;animation:freddy-flash 1s infinite alternate step-end;z-index:100}
         @keyframes freddy-flash{0%,49%{opacity:0;filter:drop-shadow(0 0 0 transparent)}50%,100%{opacity:1;filter:drop-shadow(0 0 15px rgba(255,255,255,.8))}}
         #golden-freddy-office{position:absolute;bottom:5%;left:45%;font-size:150px;display:none;filter:sepia(1) hue-rotate(15deg) saturate(3) drop-shadow(0 0 20px rgba(255,215,0,.5));z-index:3}
@@ -149,7 +149,7 @@
             <div class="hallway" id="left-hall">
                 <div class="door" id="door-left"></div>
                 <div class="light-overlay" id="light-left-overlay"></div>
-                <div class="animatronic-door" id="ai-left-visual">🐰</div>
+                <img src="bonnie-scary.png" class="animatronic-door" id="ai-left-visual" alt="Bonnie">
             </div>
             
             <div class="control-panel left-panel">

@@ -640,16 +640,16 @@ body, html {
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.05s;
-    background: #000;
+    mix-blend-mode: overlay;
 }
 
 #cam-static-overlay.burst {
-    opacity: 1;
+    opacity: 0.75;
 }
 
 #cam-static-overlay.fade-out {
     opacity: 0;
-    transition: opacity 0.4s ease-out;
+    transition: opacity 0.35s ease-out;
 }
 
 /* Horizontal interference band that scrolls through */

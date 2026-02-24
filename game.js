@@ -95,23 +95,77 @@ function playSound(type) {
             osc.stop(audioCtx.currentTime + 0.2);
             break;
 
-        case 'door':
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        case 'door': {
+            // FNAF 1: heavy metallic mechanical door slam
+            // Low impact thud
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(70, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
             osc.start();
             osc.stop(audioCtx.currentTime + 0.2);
+            // Metallic clang resonance
+            const clang = audioCtx.createOscillator();
+            const clangGain = audioCtx.createGain();
+            clang.type = 'square';
+            clang.frequency.setValueAtTime(300, audioCtx.currentTime);
+            clang.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+            clang.connect(clangGain);
+            clangGain.connect(masterGainNode);
+            clangGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            clangGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+            clang.start();
+            clang.stop(audioCtx.currentTime + 0.12);
+            // High metallic rattle
+            const rattle = audioCtx.createOscillator();
+            const rattleGain = audioCtx.createGain();
+            rattle.type = 'sawtooth';
+            rattle.frequency.setValueAtTime(800, audioCtx.currentTime);
+            rattle.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+            rattle.connect(rattleGain);
+            rattleGain.connect(masterGainNode);
+            rattleGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            rattleGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            rattle.start();
+            rattle.stop(audioCtx.currentTime + 0.15);
             break;
+        }
 
-        case 'light':
+        case 'light': {
+            // FNAF 1: fluorescent ballast buzz/hum
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(60, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.2);
+            osc.stop(audioCtx.currentTime + 0.35);
+            // Higher harmonic buzz
+            const buzz = audioCtx.createOscillator();
+            const buzzGain = audioCtx.createGain();
+            buzz.type = 'square';
+            buzz.frequency.setValueAtTime(240, audioCtx.currentTime);
+            buzz.connect(buzzGain);
+            buzzGain.connect(masterGainNode);
+            buzzGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            buzzGain.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.3);
+            buzz.start();
+            buzz.stop(audioCtx.currentTime + 0.3);
+            // Initial click/pop of the switch
+            const pop = audioCtx.createOscillator();
+            const popGain = audioCtx.createGain();
+            pop.type = 'square';
+            pop.frequency.setValueAtTime(1500, audioCtx.currentTime);
+            pop.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.02);
+            pop.connect(popGain);
+            popGain.connect(masterGainNode);
+            popGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            popGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+            pop.start();
+            pop.stop(audioCtx.currentTime + 0.03);
             break;
+        }
 
         case 'jumpscare': {
             osc.type = 'sawtooth';
@@ -493,7 +547,7 @@ function drawStaticFrame(ctx, canvas) {
         buf[i] = v;
         buf[i + 1] = v;
         buf[i + 2] = v;
-        buf[i + 3] = 200 + (Math.random() * 55) | 0;
+        buf[i + 3] = 80 + (Math.random() * 60) | 0;
     }
     ctx.putImageData(imageData, 0, 0);
 }

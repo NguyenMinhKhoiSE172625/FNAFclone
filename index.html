@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Night Shift - Prototype V4 (Audio & Dark Theme)</title>
+    <title>Web Night Shift - Prototype V5</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; color: white; font-family: 'Courier New', Courier, monospace; user-select: none; }
         
-        /* CẢI TIẾN: Lớp phủ Vignette tạo cảm giác ngột ngạt, tối tăm ở các góc */
         #vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 90%); pointer-events: none; z-index: 40; }
         #static-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.05"/%3E%3C/svg%3E'); pointer-events: none; z-index: 41; opacity: 0.5;}
 
@@ -17,15 +16,16 @@
         #start-screen p { font-size: 20px; color: #555; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /* UI Elements */
-        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+        /* HUD & Monitor Toggle (ĐÃ SỬA: CHUYỂN RA GIỮA) */
+        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
         .top-right { position: absolute; top: 20px; right: 30px; text-align: right; font-size: 24px; text-shadow: 2px 2px 0 #000; }
         .bottom-left { position: absolute; bottom: 30px; left: 30px; font-size: 20px; text-shadow: 2px 2px 0 #000; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;}
         #dialogue-box { position: absolute; top: 20px; left: 20px; width: 300px; background: rgba(0,0,0,0.8); border: 2px solid #555; padding: 15px; font-size: 14px; display: none; pointer-events: auto; box-shadow: 0 0 10px #000;}
-        #cam-toggle { position: absolute; bottom: 20px; right: 20px; width: 300px; height: 50px; background: rgba(255,255,255,0.1); border: 2px solid #555; color: #aaa; cursor: pointer; pointer-events: auto; font-size: 18px; transition: 0.2s;}
-        #cam-toggle:hover { background: rgba(255,255,255,0.3); color: white;}
+        
+        #cam-toggle { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 400px; height: 40px; background: rgba(255,255,255,0.1); border: 2px solid #555; border-bottom: none; color: #aaa; cursor: pointer; pointer-events: auto; font-size: 18px; transition: 0.2s; border-radius: 10px 10px 0 0;}
+        #cam-toggle:hover { background: rgba(255,255,255,0.3); color: white; height: 45px;}
 
-        /* CẢI TIẾN: Văn phòng tối hơn rất nhiều */
+        /* Office */
         #viewport { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         #office { position: absolute; top: 0; left: 0; width: 160vw; height: 100%; background: linear-gradient(to right, #020202, #0d0d0d, #0d0d0d, #020202); transition: transform 0.1s ease-out; display: flex; justify-content: space-between; align-items: center;}
         
@@ -38,12 +38,11 @@
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Hallways & Doors (Tối hoàn toàn khi không bật đèn) */
+        /* Hallways & Doors */
         .hallway { width: 25vw; height: 100%; background: #000; position: relative; border-left: 10px solid #050505; border-right: 10px solid #050505; display: flex; align-items: center; justify-content: center; z-index: 1;}
         .door { position: absolute; top: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, #111, #111 10px, #050505 10px, #050505 20px); transform: translateY(-100%); transition: transform 0.3s ease; border-bottom: 10px solid #222;}
         .door.closed { transform: translateY(0); }
         
-        /* Ánh sáng mờ nhạt, đáng sợ hơn */
         .light-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(200, 200, 150, 0.4) 0%, rgba(0, 0, 0, 0.9) 80%); opacity: 0; transition: opacity 0.1s; pointer-events: none;}
         .light-overlay.active { opacity: 1; }
         
@@ -65,19 +64,37 @@
         #cam-label { position: absolute; top: 20px; left: 20px; font-size: 24px; z-index: 2; color: #fff;}
         #cam-ai-visual { font-size: 120px; filter: grayscale(80%) brightness(0.7); z-index: 1; text-shadow: 0 0 30px #000; transition: 0.3s;}
 
-        #map { position: absolute; bottom: 15%; right: 5%; width: 350px; height: 300px; border: 2px solid #333; background: rgba(0,0,0,0.8); padding: 10px; position: relative;}
-        .cam-btn { position: absolute; background: rgba(20,20,20,0.8); color: #777; border: 1px solid #555; cursor: pointer; font-size: 14px; width: 50px; height: 35px; text-align: center; transition: 0.1s;}
+        /* ĐÃ SỬA: Map được cố định cứng góc phải bằng px, tránh vỡ layout */
+        #map { position: absolute; bottom: 60px; right: 40px; width: 320px; height: 320px; border: 2px solid #555; background: rgba(0,0,0,0.8); pointer-events: auto;}
+        .cam-btn { position: absolute; background: rgba(20,20,20,0.8); color: #777; border: 1px solid #555; cursor: pointer; font-size: 14px; width: 55px; height: 40px; text-align: center; transition: 0.1s;}
         .cam-btn:hover, .cam-btn.active { background: #aaa; color: #000; font-weight: bold; border-color: white;}
         
-        #cam-1A { top: 10%; left: 45%; } #cam-1B { top: 30%; left: 45%; } #cam-5  { top: 30%; left: 15%; }
-        #cam-2A { top: 60%; left: 30%; } #cam-2B { top: 85%; left: 30%; } #cam-3  { top: 60%; left: 15%; }
-        #cam-4A { top: 60%; left: 60%; } #cam-4B { top: 85%; left: 60%; }
-        .you-are-here { position: absolute; bottom: -20px; left: 45%; width: 60px; height: 30px; background: #111; border: 2px solid #500; color: #a00; font-size: 10px; display: flex; justify-content: center; align-items: center; text-align: center;}
+        #cam-1A { top: 5%; left: 40%; } #cam-1B { top: 25%; left: 40%; } #cam-5  { top: 25%; left: 10%; }
+        #cam-2A { top: 60%; left: 25%; } #cam-2B { top: 80%; left: 25%; } #cam-3  { top: 60%; left: 5%; }
+        #cam-4A { top: 60%; left: 60%; } #cam-4B { top: 80%; left: 60%; }
+        .you-are-here { position: absolute; bottom: -15px; left: 40%; width: 60px; height: 25px; background: #111; border: 2px solid #500; color: #a00; font-size: 10px; display: flex; justify-content: center; align-items: center; text-align: center;}
 
-        /* Overlay Alerts */
-        #jumpscare, #game-over, #win-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 100; display: none; justify-content: center; align-items: center; font-size: 50px; flex-direction: column;}
-        #jumpscare { background: #000; color: white; font-weight: bold; font-size: 200px; animation: shake 0.03s infinite; filter: contrast(200%);}
-        @keyframes shake { 0% { transform: translate(25px, 25px) scale(1.2); } 50% { transform: translate(-25px, -25px) scale(1.2); } 100% { transform: translate(25px, -25px) scale(1.2); } }
+        /* ĐÃ SỬA: Cải tiến Jumpscare Animation (Lao thẳng vào mặt) */
+        #jumpscare, #game-over, #win-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 200; display: none; justify-content: center; align-items: center; font-size: 50px; flex-direction: column;}
+        
+        #jumpscare-icon {
+            display: inline-block;
+            filter: drop-shadow(0 0 50px red) contrast(150%);
+            /* Kết hợp zoom nhanh và lắc giật */
+            animation: jump-zoom 0.5s cubic-bezier(0.1, 0, 0, 1) forwards, fast-shake 0.05s infinite;
+        }
+
+        @keyframes jump-zoom {
+            0% { transform: scale(0.1) translateY(50px); opacity: 0; }
+            100% { transform: scale(5) translateY(0); opacity: 1; }
+        }
+
+        @keyframes fast-shake {
+            0%, 100% { margin-left: 0; margin-top: 0; }
+            25% { margin-left: 15px; margin-top: -15px; }
+            50% { margin-left: -15px; margin-top: 15px; }
+            75% { margin-left: 15px; margin-top: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -139,7 +156,7 @@
         <div id="dialogue-box">
             <strong style="color:#aaa;">System:</strong><br><span id="dialogue-text"></span>
         </div>
-        <button id="cam-toggle" onclick="toggleCameras()">Mở Camera Monitor</button>
+        <button id="cam-toggle" onclick="toggleCameras()">Mở Monitor</button>
     </div>
 
     <div id="camera-system">
@@ -160,30 +177,30 @@
             <button class="cam-btn" id="cam-4B" onclick="switchCam('4B', 'E. Hall Corner')">4B</button>
             <div class="you-are-here">OFFICE</div>
         </div>
-        <button id="cam-toggle" style="bottom: 20px; right: 20px;" onclick="toggleCameras()">Đóng Monitor</button>
     </div>
 
-    <div id="jumpscare"><span id="jumpscare-icon"></span></div>
+    <div id="jumpscare"><div id="jumpscare-icon"></div></div>
     <div id="game-over">GAME OVER<br><button onclick="location.reload()" style="padding: 10px; font-size:20px; margin-top: 20px; cursor: pointer; background:#222; color:white; border:2px solid white;">Chơi Lại</button></div>
     <div id="win-screen">6:00 AM<br>YOU SURVIVED<br><button onclick="location.reload()" style="padding: 10px; font-size:20px; margin-top: 20px; cursor: pointer;">Chơi Lại</button></div>
 
 <script>
-    // --- AUDIO SYSTEM (Sử dụng bộ tổng hợp âm thanh Web API) ---
+    // --- AUDIO SYSTEM ---
     let audioCtx;
     let droneOsc;
     
     function initAudio() {
         if(!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            // Nền u ám (Drone ambient)
             droneOsc = audioCtx.createOscillator();
             let gainNode = audioCtx.createGain();
             droneOsc.type = 'sine';
-            droneOsc.frequency.setValueAtTime(40, audioCtx.currentTime); // Tần số siêu trầm
+            droneOsc.frequency.setValueAtTime(40, audioCtx.currentTime); 
             gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
             droneOsc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
             droneOsc.start();
+        } else if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
         }
     }
 
@@ -219,14 +236,13 @@
             osc.frequency.setValueAtTime(100, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 1.5);
             
-            // Thêm nhiễu loạn (Distortion)
             let osc2 = audioCtx.createOscillator();
             osc2.type = 'square';
             osc2.frequency.setValueAtTime(150, audioCtx.currentTime);
             osc2.connect(gain);
             osc2.start(); osc2.stop(audioCtx.currentTime + 2);
             
-            gain.gain.setValueAtTime(1, audioCtx.currentTime); // Max volume
+            gain.gain.setValueAtTime(1, audioCtx.currentTime); 
             osc.start(); osc.stop(audioCtx.currentTime + 2);
         }
     }
@@ -244,18 +260,15 @@
         gameLoop = setInterval(gameTimerLoop, 1000);
         aiLoop = setInterval(updateAI, 3000);
         
-        showDialogue([
-            "Hệ thống: Khởi động máy phát điện...",
-            "Hệ thống: Chú ý bóng tối. Âm thanh rùng rợn có thể làm bạn mất tập trung.",
-            "Hệ thống: Sống sót đến 6 giờ sáng."
-        ]);
         updateCamVisuals();
     }
 
     const office = document.getElementById('office');
     let officeX = -30; 
     document.addEventListener('mousemove', (e) => {
-        if(state.isCamOpen || !state.gameActive || state.isPowerOut) return;
+        // Chỉ pan khi con trỏ KHÔNG nằm trên vùng UI (nút cam-toggle)
+        if(state.isCamOpen || !state.gameActive || state.isPowerOut || e.target.id === 'cam-toggle') return;
+        
         const mouseX = e.clientX; const width = window.innerWidth; const panSpeed = 1.5;
         if (mouseX < width * 0.25) officeX += panSpeed; else if (mouseX > width * 0.75) officeX -= panSpeed;
         if (officeX > 0) officeX = 0; if (officeX < -60) officeX = -60; 
@@ -314,6 +327,8 @@
         playSound('click');
         state.isCamOpen = !state.isCamOpen;
         document.getElementById('camera-system').style.display = state.isCamOpen ? 'block' : 'none';
+        // Đổi chữ trên nút Monitor
+        document.getElementById('cam-toggle').innerText = state.isCamOpen ? "Đóng Monitor" : "Mở Monitor";
         updateUsageDisplay(); updateCamVisuals();
     }
 
@@ -361,13 +376,23 @@
         state.gameActive = false;
         clearInterval(gameLoop); clearInterval(aiLoop);
         playSound('jumpscare');
+        
         document.getElementById('camera-system').style.display = 'none';
-        document.getElementById('jumpscare-icon').innerText = icon;
-        document.getElementById('jumpscare').style.display = 'flex';
+        
+        // Hiện jumpscare và reset animation
+        const jumpScreen = document.getElementById('jumpscare');
+        const jumpIcon = document.getElementById('jumpscare-icon');
+        jumpIcon.innerText = icon;
+        
+        // Force reflow để đảm bảo animation chạy lại mượt mà
+        jumpScreen.style.display = 'none';
+        void jumpScreen.offsetWidth; 
+        jumpScreen.style.display = 'flex';
+        
         setTimeout(() => {
-            document.getElementById('jumpscare').style.display = 'none';
+            jumpScreen.style.display = 'none';
             document.getElementById('game-over').style.display = 'flex';
-        }, 2000);
+        }, 1500); // 1.5 giây nhảy mặt
     }
 
     function gameTimerLoop() {
@@ -395,35 +420,24 @@
     function triggerPowerOut() {
         state.isPowerOut = true; state.isCamOpen = false;
         document.getElementById('camera-system').style.display = 'none';
-        playSound('door'); // Tiếng cửa tự mở
+        document.getElementById('cam-toggle').style.display = 'none'; // Giấu nút monitor
+        playSound('door'); 
+        
         ['left', 'right'].forEach(side => {
             state.doors[side] = false;
             document.getElementById(`door-${side}`).classList.remove('closed');
             document.getElementById(`btn-door-${side}`).classList.remove('active');
             toggleLight(side, false);
         });
-        // Tắt hết mọi ánh sáng
+        
         document.getElementById('office').style.background = '#000';
         document.getElementById('vignette').style.background = 'rgba(0,0,0,0.95)';
         document.querySelector('.wall-texture').style.opacity = '0';
         document.getElementById('window-character').style.display = 'none'; 
         
-        if(droneOsc) { droneOsc.stop(); droneOsc = null; } // Tắt nhạc nền
+        if(droneOsc) { droneOsc.stop(); droneOsc = null; } 
         
         setTimeout(() => { triggerJumpscare('🐻'); }, 5000 + Math.random() * 5000);
-    }
-
-    function showDialogue(messages) {
-        const box = document.getElementById('dialogue-box');
-        const textElement = document.getElementById('dialogue-text');
-        box.style.display = 'block'; let i = 0;
-        function nextMsg() {
-            if(i < messages.length) {
-                textElement.innerText = messages[i]; playSound('click'); i++;
-                setTimeout(nextMsg, 4000);
-            } else { box.style.display = 'none'; }
-        }
-        nextMsg();
     }
 </script>
 </body>

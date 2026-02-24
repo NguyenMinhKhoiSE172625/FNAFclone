@@ -17,16 +17,211 @@ document.addEventListener('keydown', e => {
 });
 
 /* ----------------------------------------------------------
+   INTERNATIONALIZATION (i18n)
+   ---------------------------------------------------------- */
+let currentLang = localStorage.getItem('fnaf_lang') || 'en';
+
+const TRANSLATIONS = {
+    en: {
+        nightShift: 'NIGHT SHIFT',
+        night: 'Night',
+        startGame: 'START GAME',
+        eraseData: 'ERASE DATA',
+        eraseConfirm: 'Are you sure you want to erase all data (Return to Night 1)?',
+        howToPlay: 'HOW TO PLAY',
+        inst1: 'Survive your shift from <strong>12:00 AM</strong> to <strong>6:00 AM</strong>.',
+        inst2: 'Check the <span class="inst-highlight">Camera Monitor</span> to track the movement of the animatronics.',
+        inst3: 'Use the <span class="inst-highlight">Door Lights</span> to check the blind spots outside your office.',
+        inst4: 'If an animatronic is at your door, press the <span class="inst-highlight">Door Button</span> immediately to close it.',
+        inst5: '<strong>Manage your Power!</strong> Using doors, lights, and cameras drains your battery. If you run out of power... you are dead.',
+        beginShift: 'BEGIN SHIFT',
+        power: 'Power:',
+        usage: 'Usage:',
+        openMonitor: 'Open Monitor',
+        closeMonitor: 'Close Monitor',
+        gameOver: 'GAME OVER',
+        tryAgain: 'TRY AGAIN',
+        youSurvived: 'YOU SURVIVED NIGHT',
+        youBeat: 'YOU BEAT NIGHT 5!',
+        continue: 'CONTINUE',
+        audioOnly: '[AUDIO ONLY]',
+        celebrate: '★ CELEBRATE! ★',
+        outOfOrder: '⚠ OUT OF ORDER',
+        letsParty: "LET'S PARTY!",
+        rulesFor: 'RULES FOR<br>SAFETY',
+        youAreHere: '📍 YOU',
+        camShowStage: 'Show Stage',
+        camDiningArea: 'Dining Area',
+        camPirateCove: 'Pirate Cove',
+        camWestHall: 'West Hall',
+        camWHallCorner: 'W. Hall Corner',
+        camSupplyCloset: 'Supply Closet',
+        camEastHall: 'East Hall',
+        camEHallCorner: 'E. Hall Corner',
+        camBackstage: 'Backstage',
+        camKitchen: 'Kitchen',
+        camRestrooms: 'Restrooms',
+        timeAM: 'AM',
+    },
+    vi: {
+        nightShift: 'CA ĐÊM',
+        night: 'Đêm',
+        startGame: 'BẮT ĐẦU',
+        eraseData: 'XÓA DỮ LIỆU',
+        eraseConfirm: 'Bạn có chắc muốn xóa toàn bộ dữ liệu (Quay về Đêm 1)?',
+        howToPlay: 'HƯỚNG DẪN',
+        inst1: 'Sống sót qua ca trực từ <strong>12:00 SA</strong> đến <strong>6:00 SA</strong>.',
+        inst2: 'Kiểm tra <span class="inst-highlight">Màn hình Camera</span> để theo dõi sự di chuyển của các robot.',
+        inst3: 'Sử dụng <span class="inst-highlight">Đèn cửa</span> để kiểm tra điểm mù bên ngoài phòng bạn.',
+        inst4: 'Nếu robot ở ngay cửa, nhấn <span class="inst-highlight">Nút đóng cửa</span> ngay lập tức.',
+        inst5: '<strong>Quản lý Năng lượng!</strong> Sử dụng cửa, đèn và camera sẽ hao pin. Nếu hết pin... bạn sẽ chết.',
+        beginShift: 'VÀO CA',
+        power: 'Pin:',
+        usage: 'Tiêu thụ:',
+        openMonitor: 'Mở Camera',
+        closeMonitor: 'Đóng Camera',
+        gameOver: 'BẠN ĐÃ CHẾT',
+        tryAgain: 'THỬ LẠI',
+        youSurvived: 'BẠN ĐÃ SỐNG SÓT QUA ĐÊM',
+        youBeat: 'BẠN ĐÃ VƯỢT QUA ĐÊM 5!',
+        continue: 'TIẾP TỤC',
+        audioOnly: '[CHỈ ÂM THANH]',
+        celebrate: '★ CHÚC MỪNG! ★',
+        outOfOrder: '⚠ NGỪNG HOẠT ĐỘNG',
+        letsParty: 'TIỆC THÔI!',
+        rulesFor: 'QUY TẮC<br>AN TOÀN',
+        youAreHere: '📍 BẠN',
+        camShowStage: 'Sân Khấu',
+        camDiningArea: 'Phòng Ăn',
+        camPirateCove: 'Hang Cướp Biển',
+        camWestHall: 'Hành Lang Tây',
+        camWHallCorner: 'Góc HL Tây',
+        camSupplyCloset: 'Kho Đồ',
+        camEastHall: 'Hành Lang Đông',
+        camEHallCorner: 'Góc HL Đông',
+        camBackstage: 'Hậu Trường',
+        camKitchen: 'Nhà Bếp',
+        camRestrooms: 'Nhà Vệ Sinh',
+        timeAM: 'SA',
+    }
+};
+
+const CAM_NAME_KEYS = {
+    '1A': 'camShowStage',
+    '1B': 'camDiningArea',
+    '1C': 'camPirateCove',
+    '2A': 'camWestHall',
+    '2B': 'camWHallCorner',
+    '3': 'camSupplyCloset',
+    '4A': 'camEastHall',
+    '4B': 'camEHallCorner',
+    '5': 'camBackstage',
+    '6': 'camKitchen',
+    '7': 'camRestrooms',
+};
+
+function t(key) {
+    return TRANSLATIONS[currentLang][key] || TRANSLATIONS.en[key] || key;
+}
+
+function getCamName(camId) {
+    const key = CAM_NAME_KEYS[camId];
+    return key ? t(key) : camId;
+}
+
+function applyLanguage() {
+    const lang = currentLang;
+
+    document.getElementById('lang-toggle').innerText = lang === 'en' ? '🇻🇳' : '🇬🇧';
+
+    document.querySelector('#start-screen h1').innerText = t('nightShift');
+    document.getElementById('start-night-display').innerText = t('night') + ' ' + savedNight;
+    document.querySelector('#start-screen .menu-btn[onclick="showInstructions()"]').innerText = t('startGame');
+    document.querySelector('#start-screen .menu-btn[onclick="resetData()"]').innerText = t('eraseData');
+
+    document.querySelector('#instruction-screen h2').innerText = t('howToPlay');
+    const lis = document.querySelectorAll('#instruction-screen li');
+    if (lis[0]) lis[0].innerHTML = t('inst1');
+    if (lis[1]) lis[1].innerHTML = t('inst2');
+    if (lis[2]) lis[2].innerHTML = t('inst3');
+    if (lis[3]) lis[3].innerHTML = t('inst4');
+    if (lis[4]) lis[4].innerHTML = t('inst5');
+    const beginBtn = document.querySelector('#instruction-screen .menu-btn');
+    if (beginBtn) beginBtn.innerText = t('beginShift');
+
+    const powerLabel = document.querySelector('.hud-bottom-left > div:first-child');
+    if (powerLabel) {
+        const span = document.getElementById('power-display');
+        powerLabel.innerHTML = '';
+        powerLabel.style.color = '#aaa';
+        powerLabel.append(t('power') + ' ');
+        powerLabel.appendChild(span);
+    }
+    const usageLabel = document.querySelector('.hud-bottom-left > div:nth-child(2)');
+    if (usageLabel) {
+        const span = document.getElementById('usage-display');
+        usageLabel.innerHTML = '';
+        usageLabel.style.color = '#aaa';
+        usageLabel.append(t('usage') + ' ');
+        usageLabel.appendChild(span);
+    }
+
+    document.getElementById('night-display').innerText = t('night') + ' ' + savedNight;
+    try { document.getElementById('cam-toggle').innerText = gameState.isCamOpen ? t('closeMonitor') : t('openMonitor'); } catch(e) { document.getElementById('cam-toggle').innerText = t('openMonitor'); }
+
+    const goDiv = document.querySelector('#game-over > div:first-child');
+    if (goDiv) goDiv.innerText = t('gameOver');
+    const goBtn = document.querySelector('#game-over .menu-btn');
+    if (goBtn) goBtn.innerText = t('tryAgain');
+
+    const winBtn = document.querySelector('#win-screen .menu-btn');
+    if (winBtn) winBtn.innerText = t('continue');
+
+    const youHere = document.querySelector('.you-are-here');
+    if (youHere) youHere.innerText = t('youAreHere');
+
+    // Update camera map onclick handlers with translated names
+    const camBtns = {
+        '1A': 'camShowStage', '1B': 'camDiningArea', '1C': 'camPirateCove',
+        '2A': 'camWestHall', '2B': 'camWHallCorner', '3': 'camSupplyCloset',
+        '4A': 'camEastHall', '4B': 'camEHallCorner', '5': 'camBackstage',
+        '6': 'camKitchen', '7': 'camRestrooms'
+    };
+    Object.entries(camBtns).forEach(([id, key]) => {
+        const btn = document.getElementById('cam-' + id);
+        if (btn) btn.setAttribute('onclick', "switchCam('" + id + "','" + t(key).replace(/'/g, "\\'") + "')");
+    });
+
+    // Update current cam label + scene if camera is open (guard against early call)
+    try {
+        if (gameState && gameState.isCamOpen && DOM) {
+            const camId = gameState.currentCam;
+            document.getElementById('cam-label').innerText = 'CAM ' + camId + ' - ' + getCamName(camId);
+            currentSceneCam = null; currentSceneLang = null;
+            updateCamVisuals();
+        }
+    } catch(e) {}
+}
+
+function toggleLanguage() {
+    currentLang = currentLang === 'en' ? 'vi' : 'en';
+    localStorage.setItem('fnaf_lang', currentLang);
+    applyLanguage();
+}
+
+/* ----------------------------------------------------------
    NIGHT SYSTEM
    ---------------------------------------------------------- */
 let savedNight = parseInt(localStorage.getItem('fnaf_web_night')) || 1;
 if (savedNight > 5) savedNight = 5;
 
-document.getElementById('start-night-display').innerText = `Night ${savedNight}`;
-document.getElementById('night-display').innerText = `Night ${savedNight}`;
+document.getElementById('start-night-display').innerText = `${t('night')} ${savedNight}`;
+document.getElementById('night-display').innerText = `${t('night')} ${savedNight}`;
+
+applyLanguage();
 
 function resetData() {
-    if (confirm('Are you sure you want to erase all data (Return to Night 1)?')) {
+    if (confirm(t('eraseConfirm'))) {
         localStorage.removeItem('fnaf_web_night');
         location.reload();
     }
@@ -394,82 +589,28 @@ const AI_LIST = [
     }
 ];
 
+let currentSceneCam = null;
+let currentSceneLang = null;
+
 /* ----------------------------------------------------------
    CAMERA SCENES — visual backgrounds for each camera
    ---------------------------------------------------------- */
-const CAM_SCENES = {
-    '1A': `<div class="scene-wrapper scene-stage">
-        <div class="curtain-left"></div>
-        <div class="curtain-right"></div>
-        <div class="curtain-top"></div>
-        <div class="stage-floor"></div>
-        <div class="star-deco">⭐</div>
-        <div class="star-deco">⭐</div>
-        <div class="star-deco">✨</div>
-    </div>`,
-
-    '1B': `<div class="scene-wrapper scene-dining">
-        <div class="banner">★ CELEBRATE! ★</div>
-        <div class="table"></div>
-        <div class="table"></div>
-        <div class="table"></div>
-        <div class="table"></div>
-    </div>`,
-
-    '1C': `<div class="scene-wrapper scene-pirate">
-        <div class="pirate-curtain"></div>
-        <div class="oor-sign">⚠ OUT OF ORDER</div>
-    </div>`,
-
-    '2A': `<div class="scene-wrapper scene-westhall">
-        <div class="hall-perspective"></div>
-        <div class="hall-poster"></div>
-        <div class="hall-light"></div>
-    </div>`,
-
-    '2B': `<div class="scene-wrapper scene-whallcorner">
-        <div class="corner-wall"></div>
-        <div class="corner-poster"></div>
-        <div class="corner-papers">📄 📄</div>
-    </div>`,
-
-    '3': `<div class="scene-wrapper scene-closet">
-        <div class="shelf"></div>
-        <div class="shelf"></div>
-        <div class="shelf"></div>
-        <div class="closet-items">🧹 🧴 🪣</div>
-        <div class="closet-items-2">📦 🔧</div>
-    </div>`,
-
-    '4A': `<div class="scene-wrapper scene-easthall">
-        <div class="hall-perspective"></div>
-        <div class="rules-poster"></div>
-        <div class="hall-light"></div>
-    </div>`,
-
-    '4B': `<div class="scene-wrapper scene-ehallcorner">
-        <div class="corner-wall"></div>
-        <div class="rules-poster"></div>
-    </div>`,
-
-    '5': `<div class="scene-wrapper scene-backstage">
-        <div class="bs-shelf"></div>
-        <div class="bs-shelf-2"></div>
-        <div class="bs-heads">💀 💀 💀</div>
-        <div class="bs-parts">🦾 🦿 🔩</div>
-        <div class="bs-table"></div>
-    </div>`,
-
-    '6': `<div class="scene-wrapper scene-kitchen">
-        <div class="audio-icon">📡</div>
-        <div class="audio-only-text">[AUDIO ONLY]</div>
-    </div>`,
-
-    '7': `<div class="scene-wrapper scene-restrooms">
-        <div class="restroom-sign">🚻</div>
-        <div class="restroom-light"></div>
-    </div>`
-};
+function getCamScene(camId) {
+    const scenes = {
+        '1A': '<div class="scene-wrapper scene-stage"><div class="curtain-left"></div><div class="curtain-right"></div><div class="curtain-top"></div><div class="stage-floor"></div><div class="star-deco">⭐</div><div class="star-deco">⭐</div><div class="star-deco">✨</div></div>',
+        '1B': '<div class="scene-wrapper scene-dining"><div class="banner">' + t('celebrate') + '</div><div class="table"></div><div class="table"></div><div class="table"></div><div class="table"></div></div>',
+        '1C': '<div class="scene-wrapper scene-pirate"><div class="pirate-curtain"></div><div class="oor-sign">' + t('outOfOrder') + '</div></div>',
+        '2A': '<div class="scene-wrapper scene-westhall"><div class="hall-perspective"></div><div class="hall-poster"></div><div class="hall-light"></div></div>',
+        '2B': '<div class="scene-wrapper scene-whallcorner"><div class="corner-wall"></div><div class="corner-poster"></div><div class="corner-papers">📄 📄</div></div>',
+        '3': '<div class="scene-wrapper scene-closet"><div class="shelf"></div><div class="shelf"></div><div class="shelf"></div><div class="closet-items">🧹 🧴 🪣</div><div class="closet-items-2">📦 🔧</div></div>',
+        '4A': '<div class="scene-wrapper scene-easthall"><div class="hall-perspective"></div><div class="rules-poster"></div><div class="hall-light"></div></div>',
+        '4B': '<div class="scene-wrapper scene-ehallcorner"><div class="corner-wall"></div><div class="rules-poster"></div></div>',
+        '5': '<div class="scene-wrapper scene-backstage"><div class="bs-shelf"></div><div class="bs-shelf-2"></div><div class="bs-heads">💀 💀 💀</div><div class="bs-parts">🦾 🦿 🔩</div><div class="bs-table"></div></div>',
+        '6': '<div class="scene-wrapper scene-kitchen"><div class="audio-icon">📡</div><div class="audio-only-text">' + t('audioOnly') + '</div></div>',
+        '7': '<div class="scene-wrapper scene-restrooms"><div class="restroom-sign">🚻</div><div class="restroom-light"></div></div>',
+    };
+    return scenes[camId] || '';
+}
 
 /* ----------------------------------------------------------
    KITCHEN AUDIO — metallic clang sounds when Chica is there
@@ -479,31 +620,31 @@ let kitchenAudioInterval = null;
 function playKitchenClang() {
     if (!audioCtx) return;
 
-    const t = audioCtx.currentTime;
+    const now = audioCtx.currentTime;
 
     const osc1 = audioCtx.createOscillator();
     const gain1 = audioCtx.createGain();
     osc1.type = 'square';
-    osc1.frequency.setValueAtTime(800 + Math.random() * 600, t);
-    osc1.frequency.exponentialRampToValueAtTime(100 + Math.random() * 100, t + 0.15);
+    osc1.frequency.setValueAtTime(800 + Math.random() * 600, now);
+    osc1.frequency.exponentialRampToValueAtTime(100 + Math.random() * 100, now + 0.15);
     osc1.connect(gain1);
     gain1.connect(masterGainNode);
-    gain1.gain.setValueAtTime(0.12, t);
-    gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-    osc1.start(t);
-    osc1.stop(t + 0.2);
+    gain1.gain.setValueAtTime(0.12, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc1.start(now);
+    osc1.stop(now + 0.2);
 
     const osc2 = audioCtx.createOscillator();
     const gain2 = audioCtx.createGain();
     osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(2000 + Math.random() * 1500, t);
-    osc2.frequency.exponentialRampToValueAtTime(200, t + 0.1);
+    osc2.frequency.setValueAtTime(2000 + Math.random() * 1500, now);
+    osc2.frequency.exponentialRampToValueAtTime(200, now + 0.1);
     osc2.connect(gain2);
     gain2.connect(masterGainNode);
-    gain2.gain.setValueAtTime(0.08, t);
-    gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-    osc2.start(t);
-    osc2.stop(t + 0.12);
+    gain2.gain.setValueAtTime(0.08, now);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+    osc2.start(now);
+    osc2.stop(now + 0.12);
 
     const noise = audioCtx.createBufferSource();
     const bufSize = audioCtx.sampleRate * 0.08;
@@ -514,10 +655,10 @@ function playKitchenClang() {
     const noiseGain = audioCtx.createGain();
     noise.connect(noiseGain);
     noiseGain.connect(masterGainNode);
-    noiseGain.gain.setValueAtTime(0.06, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-    noise.start(t);
-    noise.stop(t + 0.1);
+    noiseGain.gain.setValueAtTime(0.06, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+    noise.start(now);
+    noise.stop(now + 0.1);
 }
 
 function startKitchenAudio() {
@@ -589,6 +730,7 @@ function showInstructions() {
 function startGameplay() {
     DOM.instructionScreen.style.display = 'none';
     gameState.gameActive = true;
+    DOM.timeDisplay.innerText = `12:00 ${t('timeAM')}`;
     gameLoop = setInterval(gameTimerLoop, 1000);
     aiLoop = setInterval(updateAI, 3000);
     updateCamVisuals();
@@ -784,7 +926,7 @@ function startCamTimestamp() {
         const h = now.getHours() % 12 || 12;
         const m = String(now.getMinutes()).padStart(2, '0');
         const s = String(now.getSeconds()).padStart(2, '0');
-        DOM.camTimestamp.innerText = `${h}:${m}:${s} AM`;
+        DOM.camTimestamp.innerText = `${h}:${m}:${s} ${t('timeAM')}`;
     }, 1000);
 }
 
@@ -804,6 +946,7 @@ function toggleCameras() {
         DOM.cameraSystem.classList.add('monitor-closing');
         stopCameraNoise();
         stopKitchenAudio();
+        currentSceneCam = null; currentSceneLang = null;
         // Resume fan when camera is lowered
         if (fanEl) fanEl.style.animationPlayState = 'running';
         setTimeout(() => {
@@ -820,9 +963,10 @@ function toggleCameras() {
         // Fan stops when looking at camera (FNAF 1 detail)
         if (fanEl) fanEl.style.animationPlayState = 'paused';
         if (gameState.gfActive) cancelGoldenFreddy();
+        DOM.camLabel.innerText = `CAM ${gameState.currentCam} - ${getCamName(gameState.currentCam)}`;
     }
 
-    DOM.camToggle.innerText = gameState.isCamOpen ? 'Close Monitor' : 'Open Monitor';
+    DOM.camToggle.innerText = gameState.isCamOpen ? t('closeMonitor') : t('openMonitor');
     updateUsageDisplay();
     updateCamVisuals();
 }
@@ -841,9 +985,10 @@ function switchCam(cam, name) {
 function updateCamVisuals() {
     if (!gameState.isCamOpen) return;
 
-    // Render camera scene background
-    if (DOM.camScene) {
-        DOM.camScene.innerHTML = CAM_SCENES[gameState.currentCam] || '';
+    if (DOM.camScene && (currentSceneCam !== gameState.currentCam || currentSceneLang !== currentLang)) {
+        currentSceneCam = gameState.currentCam;
+        currentSceneLang = currentLang;
+        DOM.camScene.innerHTML = getCamScene(gameState.currentCam);
     }
 
     if (gameState.currentCam === '6') {
@@ -1000,7 +1145,7 @@ function gameTimerLoop() {
         timeInSeconds = 0;
         gameState.timeHour++;
         if (gameState.timeHour === 13) gameState.timeHour = 1;
-        DOM.timeDisplay.innerText = `${gameState.timeHour}:00 AM`;
+        DOM.timeDisplay.innerText = `${gameState.timeHour}:00 ${t('timeAM')}`;
         AI_LIST.forEach(ai => ai.level++);
 
         if (gameState.timeHour === 6) {
@@ -1012,9 +1157,9 @@ function gameTimerLoop() {
 
             if (gameState.night < 5) {
                 localStorage.setItem('fnaf_web_night', gameState.night + 1);
-                DOM.winSubtext.innerText = `YOU SURVIVED NIGHT ${gameState.night}`;
+                DOM.winSubtext.innerText = `${t('youSurvived')} ${gameState.night}`;
             } else {
-                DOM.winSubtext.innerText = 'YOU BEAT NIGHT 5!';
+                DOM.winSubtext.innerText = t('youBeat');
             }
             DOM.winScreen.style.display = 'flex';
             return;

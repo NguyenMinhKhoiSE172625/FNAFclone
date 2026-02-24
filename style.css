@@ -115,8 +115,6 @@ body, html {
     text-align: center;
     font-size: 36px;
     margin-top: 0;
-    text-shadow: 0 0 5px red;
-    letter-spacing: 2px;
 }
 
 .inst-box ul {
@@ -293,7 +291,7 @@ body, html {
     position: absolute;
     top: 0; left: 0;
     width: 160vw; height: 100%;
-    background: linear-gradient(to right, #050505, #151515, #151515, #050505);
+    background: linear-gradient(to bottom, #2a2a2a 0%, #1a1a1a 60%, #151515 80%, #151515 100%);
     transition: transform .1s ease-out;
     display: flex;
     justify-content: space-between;
@@ -301,54 +299,234 @@ body, html {
 }
 
 /* ----------------------------------------------------------
-   9. OFFICE DECORATIONS
+   9. OFFICE DECORATIONS — FNAF 1 Authentic
    ---------------------------------------------------------- */
+
+/* Wall base texture - subtle diagonal pattern */
 .wall-texture {
     position: absolute;
     width: 100%; height: 80%;
     top: 0;
-    background-image: repeating-linear-gradient(45deg, rgba(0,0,0,.2) 0, rgba(0,0,0,.2) 2px, transparent 2px, transparent 4px);
+    background-image:
+        repeating-linear-gradient(90deg, rgba(0,0,0,.15) 0, rgba(0,0,0,.15) 1px, transparent 1px, transparent 80px),
+        repeating-linear-gradient(0deg, rgba(0,0,0,.1) 0, rgba(0,0,0,.1) 1px, transparent 1px, transparent 80px);
     pointer-events: none;
-    opacity: .3;
+    opacity: .4;
 }
 
+/* Tile stripe at bottom of wall (above floor) */
+.wall-tile-stripe {
+    position: absolute;
+    bottom: 20%; left: 0;
+    width: 100%; height: 8%;
+    background: repeating-linear-gradient(90deg,
+        #1a1a1a 0px, #1a1a1a 30px,
+        #111 30px, #111 31px,
+        #222 31px, #222 61px,
+        #111 61px, #111 62px
+    );
+    border-top: 2px solid #333;
+    border-bottom: 2px solid #0a0a0a;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Checkered black/white tile floor */
 .floor {
     position: absolute;
     bottom: 0; left: 0;
     width: 100%; height: 20%;
-    background: repeating-linear-gradient(45deg, #151515, #151515 30px, #0a0a0a 30px, #0a0a0a 60px);
+    background:
+        repeating-conic-gradient(#1a1a1a 0% 25%, #0d0d0d 0% 50%) 0 0 / 40px 40px;
     z-index: 0;
-    border-top: 5px solid #000;
+    border-top: 3px solid #222;
 }
 
+/* Overhead lamp glow */
+.overhead-lamp {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 60vw; height: 70%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,240,200,0.06) 0%, rgba(255,230,180,0.02) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Wall decorations container */
+.wall-decorations {
+    position: absolute;
+    top: 5%; left: 38vw;
+    width: 84vw; height: 55%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* CELEBRATE! poster */
+.celebrate-poster {
+    position: absolute;
+    top: 5%; left: 30%;
+    width: 180px; height: 120px;
+    background: linear-gradient(to bottom, #1a0a2a, #0d0520);
+    border: 3px solid #333;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 15px rgba(0,0,0,.8);
+    overflow: hidden;
+}
+
+.poster-title {
+    color: #ffcc00;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255,200,0,.5);
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.poster-characters {
+    font-size: 28px;
+    filter: brightness(.7) saturate(.6);
+    margin-bottom: 3px;
+}
+
+.poster-stage {
+    width: 80%;
+    height: 15px;
+    background: linear-gradient(to bottom, #2a1a0a, #1a0d05);
+    border-radius: 2px 2px 0 0;
+}
+
+/* Children's drawings */
+.child-drawing {
+    position: absolute;
+    border: 2px solid #2a2a2a;
+    border-radius: 1px;
+    box-shadow: 0 1px 8px rgba(0,0,0,.6);
+}
+
+.drawing-1 {
+    top: 10%; left: 8%;
+    width: 55px; height: 45px;
+    background: linear-gradient(135deg, #2a1a1a, #1a1010);
+    border-color: #3a2020;
+}
+
+.drawing-2 {
+    top: 35%; left: 55%;
+    width: 50px; height: 40px;
+    background: linear-gradient(135deg, #1a1a2a, #101020);
+    border-color: #20203a;
+}
+
+.drawing-3 {
+    top: 5%; right: 15%;
+    width: 48px; height: 42px;
+    background: linear-gradient(135deg, #1a2a1a, #102010);
+    border-color: #203a20;
+}
+
+/* Desk - wood grain texture */
 .desk {
     position: absolute;
     bottom: -10%; left: 30vw;
     width: 100vw; height: 40%;
-    background: #221510;
+    background:
+        repeating-linear-gradient(
+            2deg,
+            rgba(60,35,15,0.3) 0px,
+            rgba(50,28,10,0.2) 2px,
+            transparent 2px,
+            transparent 8px
+        ),
+        linear-gradient(to bottom, #2a1810, #221510, #1a1008);
     border-top: 15px solid #110906;
     box-shadow: 0 -20px 50px rgba(0,0,0,.9);
+    z-index: 2;
+    position: relative;
+    position: absolute;
+}
+
+.desk-surface {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        175deg,
+        transparent 0px,
+        rgba(80,50,20,0.05) 1px,
+        transparent 2px,
+        transparent 12px
+    );
+    pointer-events: none;
+}
+
+.desk-items {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     padding-top: 20px;
-    z-index: 2;
-}
-
-.fan {
-    font-size: 60px;
-    margin-right: 50px;
-    animation: spin .15s linear infinite;
-    filter: brightness(.6);
+    gap: 30px;
+    position: relative;
+    z-index: 1;
 }
 
 .desk-monitor {
+    position: relative;
+}
+
+.desk-monitor .monitor-screen {
     width: 120px; height: 90px;
     background: #0a0a0a;
     border: 5px solid #222;
     border-radius: 5px;
-    box-shadow: inset 0 0 15px #000;
+    box-shadow: inset 0 0 15px #000, 0 0 8px rgba(20,40,80,0.15);
 }
+
+.monitor-wire {
+    position: absolute;
+    top: -60px; left: 50%;
+    width: 2px; height: 60px;
+    background: linear-gradient(to bottom, #111, #222);
+    transform: translateX(-50%);
+}
+
+.cupcake {
+    position: absolute;
+    top: -20px; right: -5px;
+    font-size: 22px;
+    filter: brightness(.7);
+}
+
+.desk-cup {
+    font-size: 28px;
+    filter: brightness(.5) saturate(.6);
+    margin-top: 25px;
+    margin-left: 15px;
+}
+
+.fan {
+    font-size: 60px;
+    margin: 0 20px;
+    animation: spin .15s linear infinite;
+    filter: brightness(.6);
+    margin-top: 10px;
+}
+
+.paper-ball {
+    position: absolute;
+    font-size: 14px;
+    filter: brightness(.3) grayscale(1);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.pb-1 { top: 25px; left: 15%; }
+.pb-2 { top: 35px; right: 20%; }
+.pb-3 { bottom: 45%; left: 42%; }
 
 @keyframes spin {
     100% { transform: rotate(360deg); }
@@ -479,6 +657,26 @@ body, html {
     box-shadow: inset 0 0 30px #000;
 }
 
+.window-frame {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 3px solid #333;
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 2;
+    box-shadow: inset 0 0 8px rgba(100,120,150,0.08);
+}
+
+.window-ambient {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, rgba(40,50,70,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+}
+
 #window-character {
     font-size: 80px;
     position: absolute;
@@ -491,11 +689,11 @@ body, html {
 
 #window-character.visible {
     opacity: 1;
-    filter: brightness(1) saturate(0.8);
+    filter: brightness(.6) contrast(1.2);
 }
 
 /* ----------------------------------------------------------
-   14. CONTROL PANELS
+   14. CONTROL PANELS (door & light buttons)
    ---------------------------------------------------------- */
 .control-panel {
     position: absolute;
@@ -553,26 +751,64 @@ body, html {
     z-index: 60;
     pointer-events: auto;
     display: none;
-    transform: translateY(100%);
+    transform: scaleY(0);
+    transform-origin: center center;
 }
 
+/* Monitor open: CRT power-on — thin bright line expands to full screen */
 .monitor-opening {
     display: block !important;
-    animation: monitor-up 0.3s ease-out forwards;
+    animation: monitor-on 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Monitor close: CRT power-off — compresses to bright line then vanishes */
 .monitor-closing {
-    animation: monitor-down 0.3s ease-in forwards;
+    animation: monitor-off 0.2s cubic-bezier(0.5, 0, 0.84, 0) forwards;
 }
 
-@keyframes monitor-up {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0%); }
+@keyframes monitor-on {
+    0% {
+        transform: scaleY(0.005) scaleX(0.8);
+        filter: brightness(6);
+        opacity: 1;
+    }
+    25% {
+        transform: scaleY(0.02) scaleX(0.9);
+        filter: brightness(4);
+    }
+    50% {
+        transform: scaleY(0.6) scaleX(1);
+        filter: brightness(1.8);
+    }
+    75% {
+        transform: scaleY(1) scaleX(1);
+        filter: brightness(1.3);
+    }
+    100% {
+        transform: scaleY(1) scaleX(1);
+        filter: brightness(1);
+    }
 }
 
-@keyframes monitor-down {
-    from { transform: translateY(0%); }
-    to   { transform: translateY(100%); }
+@keyframes monitor-off {
+    0% {
+        transform: scaleY(1) scaleX(1);
+        filter: brightness(1);
+        opacity: 1;
+    }
+    40% {
+        transform: scaleY(1) scaleX(1);
+        filter: brightness(2);
+    }
+    75% {
+        transform: scaleY(0.01) scaleX(0.85);
+        filter: brightness(5);
+    }
+    100% {
+        transform: scaleY(0) scaleX(0);
+        filter: brightness(0);
+        opacity: 0;
+    }
 }
 
 /* ----------------------------------------------------------
@@ -685,6 +921,388 @@ body, html {
 }
 
 /* ----------------------------------------------------------
+   17b. CAMERA SCENE BACKGROUNDS
+   ---------------------------------------------------------- */
+#cam-scene {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scene-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* --- Show Stage (1A) --- */
+.scene-stage {
+    background: linear-gradient(to bottom, #1a0505 0%, #0d0202 100%);
+}
+.scene-stage .curtain-left,
+.scene-stage .curtain-right {
+    position: absolute;
+    top: 0;
+    width: 15%;
+    height: 100%;
+    background: repeating-linear-gradient(180deg, #4a0a0a 0px, #3a0505 8px, #4a0a0a 16px);
+}
+.scene-stage .curtain-left { left: 0; }
+.scene-stage .curtain-right { right: 0; }
+.scene-stage .curtain-top {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 12%;
+    background: repeating-linear-gradient(90deg, #4a0a0a 0px, #3a0505 15px, #4a0a0a 30px);
+    border-bottom: 3px solid #2a0505;
+    z-index: 1;
+}
+.scene-stage .stage-floor {
+    position: absolute;
+    bottom: 0; left: 10%;
+    width: 80%; height: 15%;
+    background: linear-gradient(to bottom, #2a1a0a, #1a0d05);
+    border-radius: 3px 3px 0 0;
+}
+.scene-stage .star-deco {
+    position: absolute;
+    font-size: 20px;
+    filter: brightness(.5);
+}
+.scene-stage .star-deco:nth-child(5) { top: 15%; left: 20%; }
+.scene-stage .star-deco:nth-child(6) { top: 18%; right: 22%; }
+.scene-stage .star-deco:nth-child(7) { top: 25%; left: 50%; }
+
+/* --- Dining Area (1B) --- */
+.scene-dining {
+    background:
+        repeating-conic-gradient(#0d0d0d 0% 25%, #0a0a0a 0% 50%) 0 0 / 30px 30px;
+}
+.scene-dining .banner {
+    position: absolute;
+    top: 8%; left: 50%;
+    transform: translateX(-50%);
+    color: #aa8800;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(170,136,0,.3);
+    letter-spacing: 3px;
+    background: rgba(0,0,0,.6);
+    padding: 4px 16px;
+    border: 1px solid #443300;
+}
+.scene-dining .table {
+    position: absolute;
+    width: 60px; height: 35px;
+    background: #1a1510;
+    border: 2px solid #0d0a05;
+    border-radius: 3px;
+}
+.scene-dining .table::after {
+    content: '🎉';
+    position: absolute;
+    top: -15px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    filter: brightness(.6);
+}
+.scene-dining .table:nth-child(2) { top: 35%; left: 15%; }
+.scene-dining .table:nth-child(3) { top: 55%; left: 45%; }
+.scene-dining .table:nth-child(4) { top: 40%; right: 15%; }
+.scene-dining .table:nth-child(5) { top: 70%; left: 25%; }
+
+/* --- Pirate Cove (1C) --- */
+.scene-pirate {
+    background: linear-gradient(to bottom, #0d0515, #050210);
+}
+.scene-pirate .pirate-curtain {
+    position: absolute;
+    top: 0; left: 20%;
+    width: 60%; height: 85%;
+    background: repeating-linear-gradient(180deg, #2a0a3a 0px, #1a0525 10px, #2a0a3a 20px);
+    border-bottom: 4px solid #1a0520;
+    box-shadow: inset 0 0 30px rgba(0,0,0,.8);
+}
+.scene-pirate .pirate-curtain::before {
+    content: '⭐';
+    position: absolute;
+    font-size: 16px;
+    top: 20%; left: 30%;
+    filter: brightness(.4);
+}
+.scene-pirate .pirate-curtain::after {
+    content: '⭐';
+    position: absolute;
+    font-size: 14px;
+    top: 40%; right: 25%;
+    filter: brightness(.3);
+}
+.scene-pirate .oor-sign {
+    position: absolute;
+    bottom: 10%; left: 50%;
+    transform: translateX(-50%);
+    color: #aa4400;
+    font-size: 11px;
+    font-weight: bold;
+    background: rgba(0,0,0,.7);
+    padding: 3px 10px;
+    border: 1px solid #663300;
+    letter-spacing: 1px;
+}
+
+/* --- West Hall (2A) --- */
+.scene-westhall {
+    background: linear-gradient(to bottom, #0a0a0a, #050505);
+}
+.scene-westhall .hall-perspective {
+    position: absolute;
+    top: 10%; left: 25%;
+    width: 50%; height: 80%;
+    border-left: 2px solid #1a1a1a;
+    border-right: 2px solid #1a1a1a;
+    background: linear-gradient(to bottom, #0d0d0d, #030303);
+}
+.scene-westhall .hall-perspective::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 30%;
+    width: 40%; height: 100%;
+    border-left: 1px solid #111;
+    border-right: 1px solid #111;
+}
+.scene-westhall .hall-poster {
+    position: absolute;
+    top: 20%; left: 10%;
+    width: 40px; height: 30px;
+    background: #1a1510;
+    border: 1px solid #2a2a2a;
+}
+.scene-westhall .hall-poster::after {
+    content: 'LET\'S PARTY!';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5px;
+    color: #aa8800;
+    white-space: nowrap;
+}
+.scene-westhall .hall-light {
+    position: absolute;
+    top: 5%; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(255,240,200,0.08) 0%, transparent 70%);
+}
+
+/* --- W. Hall Corner (2B) --- */
+.scene-whallcorner {
+    background: #030303;
+}
+.scene-whallcorner .corner-wall {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 50% 40%, rgba(15,15,15,1) 0%, rgba(3,3,3,1) 60%);
+}
+.scene-whallcorner .corner-poster {
+    position: absolute;
+    top: 25%; right: 20%;
+    width: 35px; height: 28px;
+    background: #111;
+    border: 1px solid #222;
+}
+.scene-whallcorner .corner-papers {
+    position: absolute;
+    bottom: 15%; left: 30%;
+    font-size: 10px;
+    filter: brightness(.2);
+}
+
+/* --- Supply Closet (3) --- */
+.scene-closet {
+    background: #060606;
+}
+.scene-closet .shelf {
+    position: absolute;
+    left: 10%;
+    width: 80%; height: 3px;
+    background: #1a1a1a;
+    box-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.scene-closet .shelf:nth-child(1) { top: 20%; }
+.scene-closet .shelf:nth-child(2) { top: 45%; }
+.scene-closet .shelf:nth-child(3) { top: 70%; }
+.scene-closet .closet-items {
+    position: absolute;
+    top: 22%;
+    left: 15%;
+    font-size: 14px;
+    filter: brightness(.3);
+}
+.scene-closet .closet-items-2 {
+    position: absolute;
+    top: 47%;
+    left: 20%;
+    font-size: 12px;
+    filter: brightness(.25);
+}
+
+/* --- East Hall (4A) --- */
+.scene-easthall {
+    background: linear-gradient(to bottom, #080808, #030303);
+}
+.scene-easthall .hall-perspective {
+    position: absolute;
+    top: 10%; left: 25%;
+    width: 50%; height: 80%;
+    border-left: 2px solid #151515;
+    border-right: 2px solid #151515;
+    background: linear-gradient(to bottom, #0a0a0a, #020202);
+}
+.scene-easthall .rules-poster {
+    position: absolute;
+    top: 20%; right: 10%;
+    width: 45px; height: 55px;
+    background: #110d08;
+    border: 1px solid #2a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.scene-easthall .rules-poster::after {
+    content: 'RULES';
+    font-size: 6px;
+    color: #886600;
+}
+.scene-easthall .hall-light {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 60px; height: 120px;
+    background: radial-gradient(ellipse, rgba(255,240,200,0.05) 0%, transparent 70%);
+}
+
+/* --- E. Hall Corner (4B) --- */
+.scene-ehallcorner {
+    background: #020202;
+}
+.scene-ehallcorner .corner-wall {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(12,12,12,1) 0%, rgba(2,2,2,1) 60%);
+}
+.scene-ehallcorner .rules-poster {
+    position: absolute;
+    top: 30%; left: 20%;
+    width: 40px; height: 50px;
+    background: #0d0a05;
+    border: 1px solid #1a1a1a;
+}
+.scene-ehallcorner .rules-poster::after {
+    content: 'RULES';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 6px;
+    color: #664400;
+}
+
+/* --- Backstage (5) --- */
+.scene-backstage {
+    background: linear-gradient(to bottom, #0a0808, #050404);
+}
+.scene-backstage .bs-table {
+    position: absolute;
+    bottom: 20%; left: 20%;
+    width: 60%; height: 8%;
+    background: #1a1510;
+    border: 2px solid #0d0a05;
+}
+.scene-backstage .bs-shelf {
+    position: absolute;
+    top: 15%; left: 10%;
+    width: 80%; height: 3px;
+    background: #1a1a1a;
+}
+.scene-backstage .bs-shelf-2 {
+    position: absolute;
+    top: 40%; left: 10%;
+    width: 80%; height: 3px;
+    background: #1a1a1a;
+}
+.scene-backstage .bs-heads {
+    position: absolute;
+    top: 17%; left: 15%;
+    font-size: 22px;
+    filter: brightness(.4) grayscale(.5);
+    letter-spacing: 10px;
+}
+.scene-backstage .bs-parts {
+    position: absolute;
+    top: 42%; left: 20%;
+    font-size: 18px;
+    filter: brightness(.35);
+    letter-spacing: 8px;
+}
+
+/* --- Kitchen (6) --- */
+.scene-kitchen {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.scene-kitchen .audio-only-text {
+    color: #666;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px rgba(100,100,100,0.2);
+}
+.scene-kitchen .audio-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+    filter: brightness(.5);
+    animation: audio-pulse 2s ease-in-out infinite;
+}
+@keyframes audio-pulse {
+    0%, 100% { opacity: .4; }
+    50% { opacity: .7; }
+}
+
+/* --- Restrooms (7) --- */
+.scene-restrooms {
+    background:
+        repeating-linear-gradient(0deg, #0a0a0a 0px, #0a0a0a 20px, #080808 20px, #080808 21px),
+        repeating-linear-gradient(90deg, #0a0a0a 0px, #0a0a0a 20px, #080808 20px, #080808 21px);
+}
+.scene-restrooms .restroom-sign {
+    position: absolute;
+    top: 20%; left: 50%;
+    transform: translateX(-50%);
+    font-size: 36px;
+    filter: brightness(.5);
+}
+.scene-restrooms .restroom-light {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 150px;
+    background: radial-gradient(ellipse, rgba(255,240,200,0.04) 0%, transparent 70%);
+}
+
+/* ----------------------------------------------------------
    18. CAMERA HUD ELEMENTS (FNAF 1 authentic)
    ---------------------------------------------------------- */
 #cam-label {
@@ -769,7 +1387,7 @@ body, html {
 }
 
 /* ----------------------------------------------------------
-   19. CAMERA MAP & BUTTONS
+   19. CAMERA MAP & BUTTONS — FNAF 1 Floor Plan Layout
    ---------------------------------------------------------- */
 #map {
     position: absolute;
@@ -780,20 +1398,29 @@ body, html {
     pointer-events: auto;
 }
 
+.map-floorplan {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
 .cam-btn {
     position: absolute;
     background: rgba(30,30,30,.8);
     color: #888;
     border: 1px solid #666;
     cursor: pointer;
-    font-size: 12px;
-    width: 55px; height: 40px;
+    font-size: 11px;
+    width: 50px; height: 32px;
     text-align: center;
     transition: .1s;
     display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+    z-index: 1;
 }
 
 .cam-btn:hover,
@@ -804,31 +1431,34 @@ body, html {
     border-color: #fff;
 }
 
-/* Camera button positions */
-#cam-1A { top: 15px;  left: 147px; }
-#cam-1B { top: 65px;  left: 147px; }
-#cam-1C { top: 125px; left: 90px; }
-#cam-5  { top: 90px;  left: 20px; }
-#cam-7  { top: 90px;  right: 20px; }
-#cam-3  { top: 190px; left: 30px; }
-#cam-2A { top: 190px; left: 100px; }
-#cam-2B { top: 250px; left: 100px; }
-#cam-4A { top: 190px; right: 100px; }
-#cam-4B { top: 250px; right: 100px; }
-#cam-6  { top: 190px; right: 20px; }
+/* Camera button positions — matching FNAF 1 floor plan */
+#cam-1A { top: 18px;  left: 148px; }
+#cam-1B { top: 72px;  left: 148px; }
+#cam-1C { top: 72px;  left: 25px;  }
+#cam-5  { top: 18px;  left: 25px;  }
+#cam-7  { top: 58px;  right: 22px; }
+#cam-2A { top: 132px; left: 95px;  }
+#cam-3  { top: 142px; left: 25px;  }
+#cam-2B { top: 192px; left: 95px;  }
+#cam-4A { top: 132px; right: 68px; }
+#cam-6  { top: 130px; right: 18px; }
+#cam-4B { top: 192px; right: 68px; }
 
 .you-are-here {
     position: absolute;
-    bottom: 15px; left: 140px;
-    width: 70px; height: 25px;
-    background: #111;
+    bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 28px;
+    background: rgba(20,5,5,.9);
     border: 2px solid #600;
     color: #d00;
-    font-size: 11px;
+    font-size: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 700;
+    letter-spacing: 1px;
+    z-index: 1;
 }
 
 /* ----------------------------------------------------------
@@ -890,26 +1520,17 @@ body, html {
     width: 100%; height: 100%;
 }
 
-/* Screen shake during jumpscare */
-@keyframes screen-shake {
+@keyframes shaking {
     0%   { transform: translate(0, 0); }
-    10%  { transform: translate(-8px, 6px); }
-    20%  { transform: translate(6px, -8px); }
-    30%  { transform: translate(-6px, 4px); }
-    40%  { transform: translate(4px, -6px); }
-    50%  { transform: translate(-4px, 6px); }
-    60%  { transform: translate(6px, -4px); }
-    70%  { transform: translate(-6px, 6px); }
-    80%  { transform: translate(4px, -4px); }
-    90%  { transform: translate(-4px, 4px); }
-    100% { transform: translate(0, 0); }
+    25%  { transform: translate(-5px, 5px); }
+    50%  { transform: translate(5px, -5px); }
+    75%  { transform: translate(-3px, -3px); }
+    100% { transform: translate(3px, 3px); }
 }
 
-body.shaking {
-    animation: screen-shake 0.08s infinite;
-}
+body.shaking { animation: shaking .05s infinite; }
 
-/* Power-out darkness overlay */
+/* Power-out overlay */
 #powerout-overlay {
     position: absolute;
     top: 0; left: 0;
@@ -917,23 +1538,16 @@ body.shaking {
     background: #000;
     z-index: 50;
     display: none;
-    pointer-events: none;
 }
 
-/* ----------------------------------------------------------
-   21. NIGHT INDICATOR (6 AM win)
-   ---------------------------------------------------------- */
 #win-screen {
-    background: #000;
+    z-index: 210;
 }
 
-#win-screen #win-text {
-    font-size: 60px;
-    text-shadow: 0 0 20px rgba(255,255,255,0.5);
-    animation: six-am-flicker 0.5s ease-in-out 3;
+#game-over {
+    z-index: 210;
 }
 
-@keyframes six-am-flicker {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.5; }
+#gf-jumpscare {
+    z-index: 201;
 }

@@ -44,7 +44,23 @@
     <div id="viewport">
         <div id="office">
             <div class="wall-texture"></div>
+            <div class="wall-tile-stripe"></div>
             <div class="floor"></div>
+
+            <!-- Overhead lamp glow -->
+            <div class="overhead-lamp"></div>
+
+            <!-- Wall Decorations -->
+            <div class="wall-decorations">
+                <div class="celebrate-poster">
+                    <div class="poster-title">★ CELEBRATE! ★</div>
+                    <div class="poster-characters">🐻 🐰 🐔</div>
+                    <div class="poster-stage"></div>
+                </div>
+                <div class="child-drawing drawing-1"></div>
+                <div class="child-drawing drawing-2"></div>
+                <div class="child-drawing drawing-3"></div>
+            </div>
 
             <!-- Left Hallway (Bonnie) -->
             <div class="hallway" id="left-hall">
@@ -61,6 +77,8 @@
 
             <!-- Right Window (Chica peek) -->
             <div id="right-window">
+                <div class="window-frame"></div>
+                <div class="window-ambient"></div>
                 <div id="window-character">🐔</div>
             </div>
 
@@ -69,9 +87,23 @@
 
             <!-- Desk -->
             <div class="desk">
-                <div class="fan">❄️</div>
-                <div class="desk-monitor"></div>
-                <div class="desk-monitor"></div>
+                <div class="desk-surface"></div>
+                <div class="desk-items">
+                    <div class="desk-monitor monitor-left">
+                        <div class="monitor-screen"></div>
+                        <div class="monitor-wire"></div>
+                    </div>
+                    <div class="fan">❄️</div>
+                    <div class="desk-monitor monitor-right">
+                        <div class="monitor-screen"></div>
+                        <div class="monitor-wire"></div>
+                        <div class="cupcake">🧁</div>
+                    </div>
+                    <div class="desk-cup">🥤</div>
+                </div>
+                <div class="paper-ball pb-1">📄</div>
+                <div class="paper-ball pb-2">📄</div>
+                <div class="paper-ball pb-3">📄</div>
             </div>
 
             <!-- Right Control Panel -->
@@ -109,6 +141,9 @@
     <!-- ========== CAMERA SYSTEM ========== -->
     <div id="camera-system">
         <div id="cam-view">
+            <!-- Camera scene background (behind all overlays) -->
+            <div id="cam-scene"></div>
+
             <!-- Noise layers -->
             <canvas id="cam-noise-canvas" width="256" height="192"></canvas>
             <div class="cam-interference"></div>
@@ -136,6 +171,37 @@
             <div id="cam-ai-visual"></div>
         </div>
         <div id="map">
+            <!-- Floor plan outline -->
+            <svg class="map-floorplan" viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">
+                <!-- Show Stage -->
+                <rect x="115" y="10" width="120" height="50" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- Dining Area -->
+                <rect x="85" y="60" width="180" height="60" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- Pirate Cove -->
+                <rect x="15" y="65" width="70" height="50" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- Backstage -->
+                <rect x="15" y="10" width="70" height="55" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- Restrooms -->
+                <rect x="265" y="50" width="70" height="55" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- West Hall -->
+                <rect x="85" y="120" width="55" height="60" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- Supply Closet -->
+                <rect x="15" y="135" width="70" height="40" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- W. Hall Corner -->
+                <rect x="85" y="180" width="55" height="50" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- East Hall -->
+                <rect x="210" y="120" width="55" height="60" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- Kitchen -->
+                <rect x="265" y="120" width="70" height="55" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- E. Hall Corner -->
+                <rect x="210" y="180" width="55" height="50" fill="none" stroke="#444" stroke-width="1"/>
+                <!-- Office -->
+                <rect x="120" y="250" width="110" height="50" fill="none" stroke="#622" stroke-width="1.5"/>
+                <!-- Hallway connections -->
+                <line x1="112" y1="230" x2="145" y2="250" stroke="#444" stroke-width="1" stroke-dasharray="3,3"/>
+                <line x1="237" y1="230" x2="205" y2="250" stroke="#444" stroke-width="1" stroke-dasharray="3,3"/>
+            </svg>
+            <!-- Camera buttons positioned on floor plan -->
             <div class="cam-btn active" id="cam-1A" onclick="switchCam('1A','Show Stage')">1A</div>
             <div class="cam-btn" id="cam-1B" onclick="switchCam('1B','Dining Area')">1B</div>
             <div class="cam-btn" id="cam-1C" onclick="switchCam('1C','Pirate Cove')">1C</div>
@@ -147,7 +213,7 @@
             <div class="cam-btn" id="cam-2B" onclick="switchCam('2B','W. Hall Corner')">2B</div>
             <div class="cam-btn" id="cam-4A" onclick="switchCam('4A','East Hall')">4A</div>
             <div class="cam-btn" id="cam-4B" onclick="switchCam('4B','E. Hall Corner')">4B</div>
-            <div class="you-are-here">OFFICE</div>
+            <div class="you-are-here">📍 YOU</div>
         </div>
     </div>
 
@@ -155,8 +221,15 @@
     <div id="jumpscare-static"><canvas id="jumpscare-static-canvas" width="320" height="240"></canvas></div>
     <div id="jumpscare"><div id="jumpscare-icon"></div></div>
     <div id="gf-jumpscare"><div id="gf-jumpscare-icon">🐻</div></div>
-    <div id="game-over">GAME OVER<br><button onclick="location.reload()" style="padding:10px;font-size:20px;margin-top:20px;cursor:pointer;background:#222;color:#fff;border:2px solid #fff">Retry</button></div>
-    <div id="win-screen"><span id="win-text">6:00 AM</span><br><span id="win-subtext" style="font-size:30px">YOU SURVIVED</span><br><button onclick="location.reload()" style="padding:10px;font-size:20px;margin-top:20px;cursor:pointer;background:#fff;color:#000">Continue</button></div>
+    <div id="game-over">
+        <div style="color:red;text-shadow:0 0 30px red">GAME OVER</div>
+        <button class="menu-btn" onclick="location.reload()">TRY AGAIN</button>
+    </div>
+    <div id="win-screen">
+        <div style="color:#fff;font-size:80px">⭐ 6:00 AM ⭐</div>
+        <div id="win-subtext" style="font-size:24px;color:#aaa;margin-top:20px"></div>
+        <button class="menu-btn" onclick="location.reload()" style="margin-top:30px">CONTINUE</button>
+    </div>
 
     <script src="game.js"></script>
 </body>

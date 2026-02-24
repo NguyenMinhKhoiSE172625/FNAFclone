@@ -89,148 +89,224 @@ function playSound(type) {
         case 'click':
             osc.type = 'square';
             osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.2);
+            osc.stop(audioCtx.currentTime + 0.05);
             break;
 
-        case 'door': {
-            // FNAF 1: heavy metallic mechanical door slam
-            // Low impact thud
+        case 'door-close':
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.4);
+
+            const metalHit = audioCtx.createOscillator();
+            const metalGain = audioCtx.createGain();
+            metalHit.type = 'square';
+            metalHit.frequency.setValueAtTime(150, audioCtx.currentTime);
+            metalHit.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.15);
+            metalHit.connect(metalGain);
+            metalGain.connect(masterGainNode);
+            metalGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            metalGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            metalHit.start();
+            metalHit.stop(audioCtx.currentTime + 0.2);
+            break;
+
+        case 'door-open':
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(30, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+            break;
+
+        case 'light-buzz':
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+            break;
+
+        case 'monitor-up': {
+            const noise = audioCtx.createBufferSource();
+            const bufferSize = audioCtx.sampleRate * 0.3;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+            noise.buffer = buffer;
+            const noiseGain = audioCtx.createGain();
+            noise.connect(noiseGain);
+            noiseGain.connect(masterGainNode);
+            noiseGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+            noise.start();
+            noise.stop(audioCtx.currentTime + 0.3);
+
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(70, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.15);
-            gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
             osc.start();
             osc.stop(audioCtx.currentTime + 0.2);
-            // Metallic clang resonance
-            const clang = audioCtx.createOscillator();
-            const clangGain = audioCtx.createGain();
-            clang.type = 'square';
-            clang.frequency.setValueAtTime(300, audioCtx.currentTime);
-            clang.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
-            clang.connect(clangGain);
-            clangGain.connect(masterGainNode);
-            clangGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-            clangGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
-            clang.start();
-            clang.stop(audioCtx.currentTime + 0.12);
-            // High metallic rattle
-            const rattle = audioCtx.createOscillator();
-            const rattleGain = audioCtx.createGain();
-            rattle.type = 'sawtooth';
-            rattle.frequency.setValueAtTime(800, audioCtx.currentTime);
-            rattle.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
-            rattle.connect(rattleGain);
-            rattleGain.connect(masterGainNode);
-            rattleGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            rattleGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-            rattle.start();
-            rattle.stop(audioCtx.currentTime + 0.15);
             break;
         }
 
-        case 'light': {
-            // FNAF 1: fluorescent ballast buzz/hum
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.12, audioCtx.currentTime + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+        case 'monitor-down': {
+            const noise2 = audioCtx.createBufferSource();
+            const bufferSize2 = audioCtx.sampleRate * 0.2;
+            const buffer2 = audioCtx.createBuffer(1, bufferSize2, audioCtx.sampleRate);
+            const data2 = buffer2.getChannelData(0);
+            for (let i = 0; i < bufferSize2; i++) data2[i] = (Math.random() * 2 - 1) * 0.2;
+            noise2.buffer = buffer2;
+            const noiseGain2 = audioCtx.createGain();
+            noise2.connect(noiseGain2);
+            noiseGain2.connect(masterGainNode);
+            noiseGain2.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            noiseGain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            noise2.start();
+            noise2.stop(audioCtx.currentTime + 0.2);
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.35);
-            // Higher harmonic buzz
-            const buzz = audioCtx.createOscillator();
-            const buzzGain = audioCtx.createGain();
-            buzz.type = 'square';
-            buzz.frequency.setValueAtTime(240, audioCtx.currentTime);
-            buzz.connect(buzzGain);
-            buzzGain.connect(masterGainNode);
-            buzzGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            buzzGain.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.3);
-            buzz.start();
-            buzz.stop(audioCtx.currentTime + 0.3);
-            // Initial click/pop of the switch
-            const pop = audioCtx.createOscillator();
-            const popGain = audioCtx.createGain();
-            pop.type = 'square';
-            pop.frequency.setValueAtTime(1500, audioCtx.currentTime);
-            pop.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.02);
-            pop.connect(popGain);
-            popGain.connect(masterGainNode);
-            popGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            popGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
-            pop.start();
-            pop.stop(audioCtx.currentTime + 0.03);
+            osc.stop(audioCtx.currentTime + 0.15);
             break;
         }
 
         case 'jumpscare': {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 1.5);
-            const osc2 = audioCtx.createOscillator();
-            osc2.type = 'square';
-            osc2.frequency.setValueAtTime(150, audioCtx.currentTime);
-            osc2.connect(gain);
-            osc2.start();
-            osc2.stop(audioCtx.currentTime + 2);
-            gain.gain.setValueAtTime(1, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(2000, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(80, audioCtx.currentTime + 0.1);
+            osc.frequency.linearRampToValueAtTime(3000, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.7, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.7, audioCtx.currentTime + 0.5);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
             osc.start();
-            osc.stop(audioCtx.currentTime + 2);
-            break;
-        }
+            osc.stop(audioCtx.currentTime + 1.5);
 
-        case 'gf-hallucination': {
-            gfHallucinationOsc = audioCtx.createOscillator();
-            gfHallucinationOsc.type = 'square';
-            gfHallucinationOsc.frequency.setValueAtTime(20, audioCtx.currentTime);
-            const gfGain = audioCtx.createGain();
-            gfGain.gain.setValueAtTime(2, audioCtx.currentTime);
-            gfHallucinationOsc.connect(gfGain);
-            gfGain.connect(masterGainNode);
-            gfHallucinationOsc.start();
-            break;
-        }
-
-        case 'gf-crash':
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(50, audioCtx.currentTime);
-            gain.gain.setValueAtTime(2, audioCtx.currentTime);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 3);
-            break;
-
-        case 'static': {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.2);
-            const noise = audioCtx.createOscillator();
-            const noiseGain = audioCtx.createGain();
-            noise.type = 'sawtooth';
-            noise.frequency.setValueAtTime(3000 + Math.random() * 2000, audioCtx.currentTime);
-            noise.connect(noiseGain);
-            noiseGain.connect(masterGainNode);
-            noiseGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-            noise.start();
-            noise.stop(audioCtx.currentTime + 0.15);
+            const noise3 = audioCtx.createBufferSource();
+            const bufferSize3 = audioCtx.sampleRate * 1.5;
+            const buffer3 = audioCtx.createBuffer(1, bufferSize3, audioCtx.sampleRate);
+            const data3 = buffer3.getChannelData(0);
+            for (let i = 0; i < bufferSize3; i++) data3[i] = (Math.random() * 2 - 1);
+            noise3.buffer = buffer3;
+            const screamGain = audioCtx.createGain();
+            noise3.connect(screamGain);
+            screamGain.connect(masterGainNode);
+            screamGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            screamGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+            noise3.start();
+            noise3.stop(audioCtx.currentTime + 1.5);
             break;
         }
 
         case 'powerout': {
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(60, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 1);
-            gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.5);
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.8);
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.0);
             osc.start();
-            osc.stop(audioCtx.currentTime + 1.5);
+            osc.stop(audioCtx.currentTime + 1.0);
+
+            const buzz = audioCtx.createOscillator();
+            const buzzGain = audioCtx.createGain();
+            buzz.type = 'sawtooth';
+            buzz.frequency.setValueAtTime(60, audioCtx.currentTime);
+            buzz.connect(buzzGain);
+            buzzGain.connect(masterGainNode);
+            buzzGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            buzzGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+            buzz.start();
+            buzz.stop(audioCtx.currentTime + 0.5);
+            break;
+        }
+
+        case 'gf-hallucination': {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.5);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 3);
+
+            gfHallucinationOsc = audioCtx.createOscillator();
+            const gfGain = audioCtx.createGain();
+            gfHallucinationOsc.type = 'sawtooth';
+            gfHallucinationOsc.frequency.setValueAtTime(40, audioCtx.currentTime);
+            gfHallucinationOsc.frequency.linearRampToValueAtTime(200, audioCtx.currentTime + 3);
+            gfHallucinationOsc.connect(gfGain);
+            gfGain.connect(masterGainNode);
+            gfGain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gfGain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 2);
+            gfGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
+            gfHallucinationOsc.start();
+            gfHallucinationOsc.stop(audioCtx.currentTime + 3);
+            break;
+        }
+
+        case 'gf-jumpscare': {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(60, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(4000, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.0);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 2.0);
+
+            const gfNoise = audioCtx.createBufferSource();
+            const gfBufSize = audioCtx.sampleRate * 2;
+            const gfBuf = audioCtx.createBuffer(1, gfBufSize, audioCtx.sampleRate);
+            const gfData = gfBuf.getChannelData(0);
+            for (let i = 0; i < gfBufSize; i++) gfData[i] = (Math.random() * 2 - 1);
+            gfNoise.buffer = gfBuf;
+            const gfNoiseGain = audioCtx.createGain();
+            gfNoise.connect(gfNoiseGain);
+            gfNoiseGain.connect(masterGainNode);
+            gfNoiseGain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+            gfNoiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.0);
+            gfNoise.start();
+            gfNoise.stop(audioCtx.currentTime + 2.0);
+            break;
+        }
+
+        case 'move': {
+            const moveNoise = audioCtx.createBufferSource();
+            const moveBufSize = audioCtx.sampleRate * 0.15;
+            const moveBuf = audioCtx.createBuffer(1, moveBufSize, audioCtx.sampleRate);
+            const moveData = moveBuf.getChannelData(0);
+            for (let i = 0; i < moveBufSize; i++) moveData[i] = (Math.random() * 2 - 1) * 0.15;
+            moveNoise.buffer = moveBuf;
+            const moveGain = audioCtx.createGain();
+            moveNoise.connect(moveGain);
+            moveGain.connect(masterGainNode);
+            moveGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            moveGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            moveNoise.start();
+            moveNoise.stop(audioCtx.currentTime + 0.15);
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
             break;
         }
     }
@@ -242,9 +318,9 @@ function playSound(type) {
 const volSlider = document.getElementById('volume-slider');
 const volIcon = document.getElementById('volume-icon');
 
-volSlider.addEventListener('input', (e) => {
-    globalVolume = parseFloat(e.target.value);
-    if (isMuted) toggleMute();
+volSlider.addEventListener('input', () => {
+    globalVolume = parseFloat(volSlider.value);
+    isMuted = (globalVolume === 0);
     if (masterGainNode) masterGainNode.gain.setValueAtTime(globalVolume, audioCtx.currentTime);
     updateVolumeIcon();
 });
@@ -307,11 +383,168 @@ const AI_LIST = [
         position: 6,
         path: ['1A', '1B', '7', '6', '4A', '4B', 'right_door'],
         level: 1 + savedNight
+    },
+    {
+        name: 'Foxy',
+        icon: '🦊',
+        side: 'left',
+        position: 4,
+        path: ['1C', '2A', '2B', 'left_door', 'left_door'],
+        level: savedNight
     }
 ];
 
 /* ----------------------------------------------------------
-   DOM ELEMENT CACHE
+   CAMERA SCENES — visual backgrounds for each camera
+   ---------------------------------------------------------- */
+const CAM_SCENES = {
+    '1A': `<div class="scene-wrapper scene-stage">
+        <div class="curtain-left"></div>
+        <div class="curtain-right"></div>
+        <div class="curtain-top"></div>
+        <div class="stage-floor"></div>
+        <div class="star-deco">⭐</div>
+        <div class="star-deco">⭐</div>
+        <div class="star-deco">✨</div>
+    </div>`,
+
+    '1B': `<div class="scene-wrapper scene-dining">
+        <div class="banner">★ CELEBRATE! ★</div>
+        <div class="table"></div>
+        <div class="table"></div>
+        <div class="table"></div>
+        <div class="table"></div>
+    </div>`,
+
+    '1C': `<div class="scene-wrapper scene-pirate">
+        <div class="pirate-curtain"></div>
+        <div class="oor-sign">⚠ OUT OF ORDER</div>
+    </div>`,
+
+    '2A': `<div class="scene-wrapper scene-westhall">
+        <div class="hall-perspective"></div>
+        <div class="hall-poster"></div>
+        <div class="hall-light"></div>
+    </div>`,
+
+    '2B': `<div class="scene-wrapper scene-whallcorner">
+        <div class="corner-wall"></div>
+        <div class="corner-poster"></div>
+        <div class="corner-papers">📄 📄</div>
+    </div>`,
+
+    '3': `<div class="scene-wrapper scene-closet">
+        <div class="shelf"></div>
+        <div class="shelf"></div>
+        <div class="shelf"></div>
+        <div class="closet-items">🧹 🧴 🪣</div>
+        <div class="closet-items-2">📦 🔧</div>
+    </div>`,
+
+    '4A': `<div class="scene-wrapper scene-easthall">
+        <div class="hall-perspective"></div>
+        <div class="rules-poster"></div>
+        <div class="hall-light"></div>
+    </div>`,
+
+    '4B': `<div class="scene-wrapper scene-ehallcorner">
+        <div class="corner-wall"></div>
+        <div class="rules-poster"></div>
+    </div>`,
+
+    '5': `<div class="scene-wrapper scene-backstage">
+        <div class="bs-shelf"></div>
+        <div class="bs-shelf-2"></div>
+        <div class="bs-heads">💀 💀 💀</div>
+        <div class="bs-parts">🦾 🦿 🔩</div>
+        <div class="bs-table"></div>
+    </div>`,
+
+    '6': `<div class="scene-wrapper scene-kitchen">
+        <div class="audio-icon">📡</div>
+        <div class="audio-only-text">[AUDIO ONLY]</div>
+    </div>`,
+
+    '7': `<div class="scene-wrapper scene-restrooms">
+        <div class="restroom-sign">🚻</div>
+        <div class="restroom-light"></div>
+    </div>`
+};
+
+/* ----------------------------------------------------------
+   KITCHEN AUDIO — metallic clang sounds when Chica is there
+   ---------------------------------------------------------- */
+let kitchenAudioInterval = null;
+
+function playKitchenClang() {
+    if (!audioCtx) return;
+
+    const t = audioCtx.currentTime;
+
+    const osc1 = audioCtx.createOscillator();
+    const gain1 = audioCtx.createGain();
+    osc1.type = 'square';
+    osc1.frequency.setValueAtTime(800 + Math.random() * 600, t);
+    osc1.frequency.exponentialRampToValueAtTime(100 + Math.random() * 100, t + 0.15);
+    osc1.connect(gain1);
+    gain1.connect(masterGainNode);
+    gain1.gain.setValueAtTime(0.12, t);
+    gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+    osc1.start(t);
+    osc1.stop(t + 0.2);
+
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(2000 + Math.random() * 1500, t);
+    osc2.frequency.exponentialRampToValueAtTime(200, t + 0.1);
+    osc2.connect(gain2);
+    gain2.connect(masterGainNode);
+    gain2.gain.setValueAtTime(0.08, t);
+    gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+    osc2.start(t);
+    osc2.stop(t + 0.12);
+
+    const noise = audioCtx.createBufferSource();
+    const bufSize = audioCtx.sampleRate * 0.08;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+    noise.buffer = buf;
+    const noiseGain = audioCtx.createGain();
+    noise.connect(noiseGain);
+    noiseGain.connect(masterGainNode);
+    noiseGain.gain.setValueAtTime(0.06, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+    noise.start(t);
+    noise.stop(t + 0.1);
+}
+
+function startKitchenAudio() {
+    if (kitchenAudioInterval) return;
+    playKitchenClang();
+    kitchenAudioInterval = setInterval(() => {
+        playKitchenClang();
+    }, 600 + Math.random() * 1200);
+}
+
+function stopKitchenAudio() {
+    if (kitchenAudioInterval) {
+        clearInterval(kitchenAudioInterval);
+        kitchenAudioInterval = null;
+    }
+}
+
+function isChicaInKitchen() {
+    const chica = AI_LIST.find(ai => ai.name === 'Chica');
+    if (!chica) return false;
+    let room = chica.path[chica.path.length - 1 - chica.position];
+    if (chica.position === chica.path.length - 1) room = '1A';
+    return room === '6';
+}
+
+/* ----------------------------------------------------------
+   DOM CACHE
    ---------------------------------------------------------- */
 const DOM = {
     startScreen: document.getElementById('start-screen'),
@@ -340,7 +573,8 @@ const DOM = {
     gameOver: document.getElementById('game-over'),
     winScreen: document.getElementById('win-screen'),
     winSubtext: document.getElementById('win-subtext'),
-    noiseCanvas: document.getElementById('cam-noise-canvas')
+    noiseCanvas: document.getElementById('cam-noise-canvas'),
+    camScene: document.getElementById('cam-scene')
 };
 
 /* ----------------------------------------------------------
@@ -366,105 +600,79 @@ function startGameplay() {
    ---------------------------------------------------------- */
 let officeX = -30;
 
-document.addEventListener('mousemove', (e) => {
+document.addEventListener('mousemove', e => {
     if (gameState.isCamOpen || !gameState.gameActive || gameState.isPowerOut) return;
-    if (e.target.id === 'cam-toggle') return;
-
-    const mouseX = e.clientX;
-    const screenW = window.innerWidth;
-    const speed = 1.5;
-
-    if (mouseX < screenW * 0.25) officeX += speed;
-    else if (mouseX > screenW * 0.75) officeX -= speed;
-
-    officeX = Math.max(-60, Math.min(0, officeX));
+    const pct = e.clientX / window.innerWidth;
+    officeX = -(pct * 60);
     DOM.office.style.transform = `translateX(${officeX}vw)`;
 });
 
 /* ----------------------------------------------------------
-   POWER MANAGEMENT
+   POWER USAGE
    ---------------------------------------------------------- */
 function updateUsageDisplay() {
     let usage = 1;
+    if (gameState.isCamOpen) usage++;
     if (gameState.doors.left) usage++;
     if (gameState.doors.right) usage++;
     if (gameState.lights.left) usage++;
     if (gameState.lights.right) usage++;
-    if (gameState.isCamOpen) usage++;
-
-    DOM.usageDisplay.innerText = '🔋'.repeat(usage);
+    DOM.usageDisplay.innerText = '🔋'.repeat(Math.min(usage, 5));
     return usage;
 }
 
 /* ----------------------------------------------------------
-   DOOR & LIGHT CONTROLS
+   DOORS & LIGHTS
    ---------------------------------------------------------- */
 function toggleDoor(side) {
-    if (gameState.isPowerOut || !gameState.gameActive) return;
-    playSound('door');
+    if (!gameState.gameActive || gameState.isPowerOut) return;
     gameState.doors[side] = !gameState.doors[side];
-    document.getElementById(`door-${side}`).classList.toggle('closed');
-    document.getElementById(`btn-door-${side}`).classList.toggle('active');
+    playSound(gameState.doors[side] ? 'door-close' : 'door-open');
     updateDoorVisuals(side);
     updateUsageDisplay();
 }
 
 function toggleLight(side, on) {
-    if (gameState.isPowerOut || !gameState.gameActive) return;
-    if (on) playSound('light');
+    if (!gameState.gameActive || gameState.isPowerOut) return;
     gameState.lights[side] = on;
-
-    const overlay = document.getElementById(`light-${side}-overlay`);
-    const btn = document.getElementById(`btn-light-${side}`);
-
-    if (on) {
-        overlay.classList.add('active');
-        btn.classList.add('active');
-    } else {
-        overlay.classList.remove('active');
-        btn.classList.remove('active');
-    }
-
-    if (side === 'right') updateWindowCharacter();
+    if (on) playSound('light-buzz');
+    updateDoorVisuals(side);
     updateUsageDisplay();
 }
 
 /* ----------------------------------------------------------
-   DOOR VISUALS & WINDOW CHARACTER
+   VISUAL UPDATES (doors, lights, animatronics at doors)
    ---------------------------------------------------------- */
 function updateDoorVisuals(side) {
-    const ai = AI_LIST.find(a => a.side === side && a.position === 0);
-    const doorVisual = document.getElementById(`ai-${side}-visual`);
+    const door = document.getElementById(`door-${side}`);
+    const light = document.getElementById(`light-${side}-overlay`);
+    const ai = document.getElementById(`ai-${side}-visual`);
+    const doorBtn = document.getElementById(`btn-door-${side}`);
+    const lightBtn = document.getElementById(`btn-light-${side}`);
 
-    if (ai) {
-        if (doorVisual.tagName.toLowerCase() !== 'img') doorVisual.innerText = ai.icon;
-        doorVisual.classList.add('is-here');
-        if (side === 'right') {
-            DOM.windowChar.innerText = ai.icon;
-            DOM.windowChar.classList.add('is-here');
-        }
-    } else {
-        doorVisual.classList.remove('is-here');
-        if (side === 'right') {
-            DOM.windowChar.classList.remove('is-here');
-        }
-    }
+    door.classList.toggle('closed', gameState.doors[side]);
+    doorBtn.classList.toggle('active', gameState.doors[side]);
 
-    if (side === 'right') updateWindowCharacter();
+    light.classList.toggle('active', gameState.lights[side]);
+    lightBtn.classList.toggle('active', gameState.lights[side]);
+
+    const atDoor = AI_LIST.some(a => a.side === side && a.position === 0);
+    ai.classList.toggle('is-here', atDoor);
+
+    updateWindowCharacter();
 }
 
 function updateWindowCharacter() {
-    const wc = DOM.windowChar;
-    if (gameState.lights.right && wc.classList.contains('is-here')) {
-        wc.classList.add('visible');
+    const chicaAtDoor = AI_LIST.find(a => a.name === 'Chica' && a.position === 0);
+    if (chicaAtDoor && gameState.lights.right && !gameState.doors.right) {
+        DOM.windowChar.classList.add('visible');
     } else {
-        wc.classList.remove('visible');
+        DOM.windowChar.classList.remove('visible');
     }
 }
 
 /* ----------------------------------------------------------
-   CAMERA NOISE (Canvas-based — FNAF authentic)
-   Multi-layer: random pixels + horizontal interference bands
+   CAMERA NOISE (animated grain on camera feed)
    ---------------------------------------------------------- */
 let noiseAnimId = null;
 const noiseCtx = DOM.noiseCanvas ? DOM.noiseCanvas.getContext('2d') : null;
@@ -474,42 +682,42 @@ function drawCameraNoise() {
     const w = DOM.noiseCanvas.width;
     const h = DOM.noiseCanvas.height;
     const imageData = noiseCtx.createImageData(w, h);
-    const buf = imageData.data;
-    const len = buf.length;
+    const data = imageData.data;
 
-    for (let i = 0; i < len; i += 4) {
-        const v = (Math.random() * 255) | 0;
-        buf[i] = v;
-        buf[i + 1] = v;
-        buf[i + 2] = v;
-        buf[i + 3] = 50;
+    for (let i = 0; i < data.length; i += 4) {
+        const val = Math.random() * 255;
+        data[i] = val;
+        data[i + 1] = val;
+        data[i + 2] = val;
+        data[i + 3] = 255;
     }
 
-    const bandY = (performance.now() * 0.15) % (h + 60) - 30;
-    const bandHeight = 15 + Math.random() * 20;
-    for (let y = Math.max(0, bandY | 0); y < Math.min(h, (bandY + bandHeight) | 0); y++) {
-        for (let x = 0; x < w; x++) {
-            const idx = (y * w + x) * 4;
-            buf[idx] = 255;
-            buf[idx + 1] = 255;
-            buf[idx + 2] = 255;
-            buf[idx + 3] = 40 + (Math.random() * 30) | 0;
+    if (Math.random() < 0.15) {
+        const lineY = Math.floor(Math.random() * h);
+        const lineHeight = 1 + Math.floor(Math.random() * 3);
+        for (let y = lineY; y < Math.min(lineY + lineHeight, h); y++) {
+            for (let x = 0; x < w; x++) {
+                const idx = (y * w + x) * 4;
+                data[idx] = 255;
+                data[idx + 1] = 255;
+                data[idx + 2] = 255;
+                data[idx + 3] = 100 + Math.random() * 100;
+            }
         }
     }
 
-    if (Math.random() < 0.03) {
-        const glitchY = (Math.random() * h) | 0;
-        const glitchH = (2 + Math.random() * 6) | 0;
-        for (let y = glitchY; y < Math.min(h, glitchY + glitchH); y++) {
-            const shift = ((Math.random() - 0.5) * 20) | 0;
+    if (Math.random() < 0.08) {
+        const rollOffset = Math.floor(Math.random() * 10) - 5;
+        const startY = Math.floor(Math.random() * h);
+        const blockH = Math.floor(h * 0.1);
+        for (let y = startY; y < Math.min(startY + blockH, h); y++) {
             for (let x = 0; x < w; x++) {
-                const srcX = Math.max(0, Math.min(w - 1, x + shift));
+                const srcX = (x + rollOffset + w) % w;
                 const dstIdx = (y * w + x) * 4;
                 const srcIdx = (y * w + srcX) * 4;
-                buf[dstIdx] = buf[srcIdx];
-                buf[dstIdx + 1] = buf[srcIdx + 1];
-                buf[dstIdx + 2] = buf[srcIdx + 2];
-                buf[dstIdx + 3] = 80;
+                data[dstIdx] = data[srcIdx];
+                data[dstIdx + 1] = data[srcIdx + 1];
+                data[dstIdx + 2] = data[srcIdx + 2];
             }
         }
     }
@@ -519,65 +727,49 @@ function drawCameraNoise() {
 }
 
 function startCameraNoise() {
-    if (!noiseAnimId) drawCameraNoise();
+    if (noiseAnimId === null) drawCameraNoise();
 }
 
 function stopCameraNoise() {
-    if (noiseAnimId) {
+    if (noiseAnimId !== null) {
         cancelAnimationFrame(noiseAnimId);
         noiseAnimId = null;
     }
 }
 
 /* ----------------------------------------------------------
-   CAMERA STATIC BURST (FNAF 1 authentic)
-   Full-frame static that fades in then slowly fades out
+   STATIC BURST (on camera switch)
    ---------------------------------------------------------- */
 let staticBurstTimeout = null;
 const staticCtx = DOM.camStaticCanvas ? DOM.camStaticCanvas.getContext('2d') : null;
 
 function drawStaticFrame(ctx, canvas) {
-    if (!ctx) return;
-    const w = canvas.width;
-    const h = canvas.height;
-    const imageData = ctx.createImageData(w, h);
-    const buf = imageData.data;
-    for (let i = 0; i < buf.length; i += 4) {
-        const v = (Math.random() * 255) | 0;
-        buf[i] = v;
-        buf[i + 1] = v;
-        buf[i + 2] = v;
-        buf[i + 3] = 80 + (Math.random() * 60) | 0;
+    const w = canvas.width, h = canvas.height;
+    const img = ctx.createImageData(w, h);
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+        const v = Math.random() * 255;
+        d[i] = v; d[i+1] = v; d[i+2] = v; d[i+3] = 200;
     }
-    ctx.putImageData(imageData, 0, 0);
+    ctx.putImageData(img, 0, 0);
 }
 
 function triggerStaticBurst() {
-    if (staticBurstTimeout) clearTimeout(staticBurstTimeout);
-
+    if (!staticCtx) return;
     drawStaticFrame(staticCtx, DOM.camStaticCanvas);
+
     DOM.camStaticOverlay.classList.remove('fade-out');
     DOM.camStaticOverlay.classList.add('burst');
-    playSound('static');
 
-    let frames = 0;
-    const maxFrames = 4;
-    const animateStatic = () => {
-        if (frames < maxFrames) {
-            drawStaticFrame(staticCtx, DOM.camStaticCanvas);
-            frames++;
-            requestAnimationFrame(animateStatic);
-        }
-    };
-    requestAnimationFrame(animateStatic);
-
+    if (staticBurstTimeout) clearTimeout(staticBurstTimeout);
     staticBurstTimeout = setTimeout(() => {
         DOM.camStaticOverlay.classList.remove('burst');
         DOM.camStaticOverlay.classList.add('fade-out');
+
         staticBurstTimeout = setTimeout(() => {
             DOM.camStaticOverlay.classList.remove('fade-out');
-        }, 400);
-    }, 150);
+        }, 350);
+    }, 80);
 }
 
 /* ----------------------------------------------------------
@@ -588,7 +780,6 @@ let camTimestampInterval = null;
 function startCamTimestamp() {
     if (camTimestampInterval) return;
     camTimestampInterval = setInterval(() => {
-        if (!DOM.camTimestamp) return;
         const now = new Date();
         const h = now.getHours() % 12 || 12;
         const m = String(now.getMinutes()).padStart(2, '0');
@@ -598,26 +789,36 @@ function startCamTimestamp() {
 }
 
 /* ----------------------------------------------------------
-   CAMERA SYSTEM
+   CAMERA TOGGLE & SWITCHING
    ---------------------------------------------------------- */
 function toggleCameras() {
     if (gameState.isPowerOut || !gameState.gameActive) return;
-    playSound('click');
     gameState.isCamOpen = !gameState.isCamOpen;
 
+    const fanEl = document.querySelector('.fan');
+
     if (!gameState.isCamOpen) {
+        // --- MONITOR DOWN ---
+        playSound('monitor-down');
         DOM.cameraSystem.classList.remove('monitor-opening');
         DOM.cameraSystem.classList.add('monitor-closing');
         stopCameraNoise();
+        stopKitchenAudio();
+        // Resume fan when camera is lowered
+        if (fanEl) fanEl.style.animationPlayState = 'running';
         setTimeout(() => {
             if (!gameState.isCamOpen) DOM.cameraSystem.style.display = 'none';
-        }, 300);
+        }, 250);
         if (Math.random() < 0.05 && !gameState.gfActive) triggerGoldenFreddy();
     } else {
+        // --- MONITOR UP ---
+        playSound('monitor-up');
         DOM.cameraSystem.classList.remove('monitor-closing');
         DOM.cameraSystem.classList.add('monitor-opening');
         triggerStaticBurst();
         startCameraNoise();
+        // Fan stops when looking at camera (FNAF 1 detail)
+        if (fanEl) fanEl.style.animationPlayState = 'paused';
         if (gameState.gfActive) cancelGoldenFreddy();
     }
 
@@ -629,6 +830,7 @@ function toggleCameras() {
 function switchCam(cam, name) {
     playSound('click');
     triggerStaticBurst();
+    stopKitchenAudio();
     gameState.currentCam = cam;
     DOM.camLabel.innerText = `CAM ${cam} - ${name}`;
     document.querySelectorAll('.cam-btn').forEach(btn => btn.classList.remove('active'));
@@ -639,11 +841,27 @@ function switchCam(cam, name) {
 function updateCamVisuals() {
     if (!gameState.isCamOpen) return;
 
+    // Render camera scene background
+    if (DOM.camScene) {
+        DOM.camScene.innerHTML = CAM_SCENES[gameState.currentCam] || '';
+    }
+
     if (gameState.currentCam === '6') {
-        DOM.camAiVisual.innerText = '[AUDIO ONLY]';
+        DOM.camAiVisual.innerText = '';
+        DOM.camAiVisual.style.fontSize = '';
+        // Kitchen audio: play if Chica is in kitchen
+        if (isChicaInKitchen()) {
+            startKitchenAudio();
+        } else {
+            stopKitchenAudio();
+        }
         return;
     }
 
+    // Not on kitchen — stop kitchen audio
+    stopKitchenAudio();
+
+    DOM.camAiVisual.style.fontSize = '';
     const icons = [];
     AI_LIST.forEach(ai => {
         let room = ai.path[ai.path.length - 1 - ai.position];
@@ -661,16 +879,16 @@ function triggerGoldenFreddy() {
     DOM.goldenFreddy.style.display = 'block';
     playSound('gf-hallucination');
     gfTimeout = setTimeout(() => {
-        if (gameState.gfActive && !gameState.isCamOpen) executeGoldenFreddyJumpscare();
-    }, 2000);
+        if (gameState.gfActive) executeGoldenFreddyJumpscare();
+    }, 5000);
 }
 
 function cancelGoldenFreddy() {
     gameState.gfActive = false;
     DOM.goldenFreddy.style.display = 'none';
-    clearTimeout(gfTimeout);
+    if (gfTimeout) clearTimeout(gfTimeout);
     if (gfHallucinationOsc) {
-        gfHallucinationOsc.stop();
+        try { gfHallucinationOsc.stop(); } catch(e) {}
         gfHallucinationOsc = null;
     }
 }
@@ -679,16 +897,22 @@ function executeGoldenFreddyJumpscare() {
     gameState.gameActive = false;
     clearInterval(gameLoop);
     clearInterval(aiLoop);
+    if (freddyMusicInterval) clearInterval(freddyMusicInterval);
     stopCameraNoise();
-    if (gfHallucinationOsc) {
-        gfHallucinationOsc.stop();
-        gfHallucinationOsc = null;
-    }
-    playSound('gf-crash');
+    stopKitchenAudio();
+
     DOM.cameraSystem.style.display = 'none';
-    DOM.staticOverlay.classList.add('heavy-static');
+    DOM.goldenFreddy.style.display = 'none';
+
+    playSound('gf-jumpscare');
+    document.body.classList.add('shaking');
     DOM.gfJumpscare.style.display = 'flex';
-    setTimeout(() => location.reload(), 3000);
+
+    setTimeout(() => {
+        document.body.classList.remove('shaking');
+        DOM.gfJumpscare.style.display = 'none';
+        DOM.gameOver.style.display = 'flex';
+    }, 2000);
 }
 
 /* ----------------------------------------------------------
@@ -697,45 +921,35 @@ function executeGoldenFreddyJumpscare() {
 function updateAI() {
     if (!gameState.gameActive || gameState.isPowerOut) return;
 
-    let camInterrupted = false;
-
     AI_LIST.forEach(ai => {
-        const roll = Math.floor(Math.random() * 20) + 1;
-        if (roll <= ai.level) {
-            let prevRoom = ai.path[ai.path.length - 1 - ai.position];
-            if (ai.position === ai.path.length - 1) prevRoom = '1A';
-
-            let moved = false;
-
-            if (ai.position > 0) {
-                ai.position--;
-                moved = true;
-            } else if (ai.position === 0) {
-                if (gameState.doors[ai.side]) {
-                    ai.position = Math.floor(Math.random() * 2) + 1;
-                    moved = true;
-                } else {
+        if (ai.position <= 0) {
+            // At the door — check if door is closed
+            if (gameState.doors[ai.side]) {
+                ai.position = Math.min(ai.path.length - 1, 3 + Math.floor(Math.random() * 3));
+                playSound('move');
+            } else {
+                // Door open — chance to attack
+                if (Math.random() < 0.25 && !gameState.isCamOpen) {
                     triggerJumpscare(ai.icon);
+                    return;
                 }
             }
-
-            if (moved && gameState.isCamOpen) {
-                const newRoom = ai.path[ai.path.length - 1 - ai.position];
-                if (prevRoom === gameState.currentCam || newRoom === gameState.currentCam) {
-                    camInterrupted = true;
-                }
+        } else {
+            const roll = Math.random() * 20;
+            if (roll < ai.level) {
+                ai.position--;
+                playSound('move');
             }
         }
     });
 
-    if (camInterrupted) triggerStaticBurst();
-    updateCamVisuals();
     updateDoorVisuals('left');
     updateDoorVisuals('right');
+    updateCamVisuals();
 }
 
 /* ----------------------------------------------------------
-   JUMPSCARE (FNAF 1 authentic: static flash → jumpscare → shake)
+   JUMPSCARE
    ---------------------------------------------------------- */
 function drawJumpscareStatic() {
     const canvas = DOM.jumpscareStaticCanvas;
@@ -750,6 +964,7 @@ function triggerJumpscare(icon) {
     clearInterval(aiLoop);
     if (freddyMusicInterval) clearInterval(freddyMusicInterval);
     stopCameraNoise();
+    stopKitchenAudio();
 
     DOM.cameraSystem.style.display = 'none';
 
@@ -793,6 +1008,7 @@ function gameTimerLoop() {
             clearInterval(gameLoop);
             clearInterval(aiLoop);
             stopCameraNoise();
+            stopKitchenAudio();
 
             if (gameState.night < 5) {
                 localStorage.setItem('fnaf_web_night', gameState.night + 1);
@@ -832,6 +1048,7 @@ function triggerPowerOut() {
     DOM.cameraSystem.style.display = 'none';
     DOM.camToggle.style.display = 'none';
     stopCameraNoise();
+    stopKitchenAudio();
 
     if (gameState.gfActive) cancelGoldenFreddy();
     playSound('powerout');
@@ -839,6 +1056,7 @@ function triggerPowerOut() {
     ['left', 'right'].forEach(side => {
         gameState.doors[side] = false;
         document.getElementById(`door-${side}`).classList.remove('closed');
+        document.getElementById(`light-${side}-overlay`).classList.remove('active');
         document.getElementById(`btn-door-${side}`).classList.remove('active');
         toggleLight(side, false);
     });
@@ -878,5 +1096,5 @@ function triggerPowerOut() {
                 triggerJumpscare('🐻');
             }, silenceTime);
         }, waitTime);
-    }, 1500);
+    }, 2000);
 }

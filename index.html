@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Night Shift - Prototype V5</title>
+    <title>Web Night Shift - Prototype V6</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; color: white; font-family: 'Courier New', Courier, monospace; user-select: none; }
         
@@ -16,85 +16,75 @@
         #start-screen p { font-size: 20px; color: #555; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /* HUD & Monitor Toggle (ĐÃ SỬA: CHUYỂN RA GIỮA) */
+        /* HUD & Monitor Toggle */
         #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
         .top-right { position: absolute; top: 20px; right: 30px; text-align: right; font-size: 24px; text-shadow: 2px 2px 0 #000; }
         .bottom-left { position: absolute; bottom: 30px; left: 30px; font-size: 20px; text-shadow: 2px 2px 0 #000; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;}
         #dialogue-box { position: absolute; top: 20px; left: 20px; width: 300px; background: rgba(0,0,0,0.8); border: 2px solid #555; padding: 15px; font-size: 14px; display: none; pointer-events: auto; box-shadow: 0 0 10px #000;}
         
-        #cam-toggle { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 400px; height: 40px; background: rgba(255,255,255,0.1); border: 2px solid #555; border-bottom: none; color: #aaa; cursor: pointer; pointer-events: auto; font-size: 18px; transition: 0.2s; border-radius: 10px 10px 0 0;}
+        #cam-toggle { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 400px; height: 40px; background: rgba(255,255,255,0.1); border: 2px solid #555; border-bottom: none; color: #aaa; cursor: pointer; pointer-events: auto; font-size: 18px; transition: 0.2s; border-radius: 10px 10px 0 0; z-index: 101;}
         #cam-toggle:hover { background: rgba(255,255,255,0.3); color: white; height: 45px;}
 
         /* Office */
         #viewport { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        #office { position: absolute; top: 0; left: 0; width: 160vw; height: 100%; background: linear-gradient(to right, #020202, #0d0d0d, #0d0d0d, #020202); transition: transform 0.1s ease-out; display: flex; justify-content: space-between; align-items: center;}
+        #office { position: absolute; top: 0; left: 0; width: 160vw; height: 100%; background: linear-gradient(to right, #050505, #151515, #151515, #050505); transition: transform 0.1s ease-out; display: flex; justify-content: space-between; align-items: center;}
         
         .wall-texture { position: absolute; width: 100%; height: 80%; top: 0; background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 2px, transparent 2px, transparent 4px); pointer-events: none; opacity: 0.3;}
-        .floor { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: repeating-linear-gradient(45deg, #111, #111 30px, #050505 30px, #050505 60px); z-index: 0; border-top: 5px solid #000;}
+        .floor { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: repeating-linear-gradient(45deg, #151515, #151515 30px, #0a0a0a 30px, #0a0a0a 60px); z-index: 0; border-top: 5px solid #000;}
         
-        .desk { position: absolute; bottom: -10%; left: 30vw; width: 100vw; height: 40%; background: #1a0f0a; border-top: 15px solid #0d0705; box-shadow: 0 -20px 50px rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; z-index: 2;}
-        .fan { font-size: 60px; margin-right: 50px; animation: spin 0.15s linear infinite; filter: brightness(0.5); }
-        .desk-monitor { width: 120px; height: 90px; background: #050505; border: 5px solid #222; border-radius: 5px; box-shadow: inset 0 0 15px #000; }
+        .desk { position: absolute; bottom: -10%; left: 30vw; width: 100vw; height: 40%; background: #221510; border-top: 15px solid #110906; box-shadow: 0 -20px 50px rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; z-index: 2;}
+        .fan { font-size: 60px; margin-right: 50px; animation: spin 0.15s linear infinite; filter: brightness(0.6); }
+        .desk-monitor { width: 120px; height: 90px; background: #0a0a0a; border: 5px solid #222; border-radius: 5px; box-shadow: inset 0 0 15px #000; }
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Hallways & Doors */
-        .hallway { width: 25vw; height: 100%; background: #000; position: relative; border-left: 10px solid #050505; border-right: 10px solid #050505; display: flex; align-items: center; justify-content: center; z-index: 1;}
-        .door { position: absolute; top: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, #111, #111 10px, #050505 10px, #050505 20px); transform: translateY(-100%); transition: transform 0.3s ease; border-bottom: 10px solid #222;}
+        /* ĐÃ SỬA: Hallways & Doors Sáng hơn để dễ nhận biết */
+        .hallway { width: 25vw; height: 100%; background: #0f0f0f; position: relative; border-left: 10px solid #1a1a1a; border-right: 10px solid #1a1a1a; display: flex; align-items: center; justify-content: center; z-index: 1;}
+        .door { position: absolute; top: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, #333, #333 10px, #1a1a1a 10px, #1a1a1a 20px); transform: translateY(-100%); transition: transform 0.3s ease; border-bottom: 15px solid #444; box-shadow: inset 0 -10px 20px rgba(0,0,0,0.8);}
         .door.closed { transform: translateY(0); }
         
-        .light-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(200, 200, 150, 0.4) 0%, rgba(0, 0, 0, 0.9) 80%); opacity: 0; transition: opacity 0.1s; pointer-events: none;}
+        .light-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(200, 200, 150, 0.45) 0%, rgba(0, 0, 0, 0.8) 80%); opacity: 0; transition: opacity 0.1s; pointer-events: none;}
         .light-overlay.active { opacity: 1; }
         
-        #right-window { position: absolute; top: 20%; right: 32vw; width: 100px; height: 150px; background: #000; border: 5px solid #111; z-index: 1; overflow: hidden; box-shadow: inset 0 0 30px #000;}
+        #right-window { position: absolute; top: 20%; right: 32vw; width: 100px; height: 150px; background: #050505; border: 5px solid #222; z-index: 1; overflow: hidden; box-shadow: inset 0 0 30px #000;}
         #window-character { font-size: 80px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; filter: drop-shadow(0 0 10px rgba(255,0,0,0.5)); }
 
-        .control-panel { position: absolute; top: 50%; width: 70px; height: 140px; background: linear-gradient(to bottom, #222, #050505); border: 2px solid #000; border-radius: 10px; transform: translateY(-50%); display: flex; flex-direction: column; justify-content: space-around; align-items: center; pointer-events: auto; z-index: 5; box-shadow: 5px 5px 15px rgba(0,0,0,0.9);}
+        .control-panel { position: absolute; top: 50%; width: 70px; height: 140px; background: linear-gradient(to bottom, #333, #111); border: 2px solid #000; border-radius: 10px; transform: translateY(-50%); display: flex; flex-direction: column; justify-content: space-around; align-items: center; pointer-events: auto; z-index: 5; box-shadow: 5px 5px 15px rgba(0,0,0,0.9);}
         .left-panel { left: 26vw; } .right-panel { right: 26vw; }
         .btn { width: 45px; height: 45px; border-radius: 5px; cursor: pointer; border: 3px solid #000; transition: 0.1s;}
-        .btn-door { background: #5a0000; } .btn-door.active { background: #ff2222; box-shadow: 0 0 15px #ff0000;}
-        .btn-light { background: #665500; } .btn-light.active { background: #ffff55; box-shadow: 0 0 15px #ffff00;}
+        .btn-door { background: #6a0000; } .btn-door.active { background: #ff3333; box-shadow: 0 0 15px #ff0000;}
+        .btn-light { background: #776600; } .btn-light.active { background: #ffff66; box-shadow: 0 0 15px #ffff00;}
 
         .animatronic-door { position: absolute; font-size: 80px; display: none; filter: drop-shadow(0 0 20px #000) brightness(0.6);}
 
         /* Camera UI */
         #camera-system { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.95), rgba(0,0,0,0.95) 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px); z-index: 60; display: none; pointer-events: auto;}
-        #cam-view { position: absolute; top: 5%; left: 5%; width: 60%; height: 70%; border: 3px solid #555; display: flex; justify-content: center; align-items: center; background: #050505; box-shadow: 0 0 50px rgba(0,0,0,0.8); position: relative; overflow: hidden;}
+        #cam-view { position: absolute; top: 5%; left: 5%; width: 65%; height: 75%; border: 3px solid #777; display: flex; justify-content: center; align-items: center; background: #0a0a0a; box-shadow: 0 0 50px rgba(0,0,0,0.8); position: relative; overflow: hidden;}
         .cam-noise { position: absolute; top:0; left:0; width: 100%; height: 100%; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.15"/%3E%3C/svg%3E'); pointer-events: none; }
         #cam-label { position: absolute; top: 20px; left: 20px; font-size: 24px; z-index: 2; color: #fff;}
         #cam-ai-visual { font-size: 120px; filter: grayscale(80%) brightness(0.7); z-index: 1; text-shadow: 0 0 30px #000; transition: 0.3s;}
 
-        /* ĐÃ SỬA: Map được cố định cứng góc phải bằng px, tránh vỡ layout */
-        #map { position: absolute; bottom: 60px; right: 40px; width: 320px; height: 320px; border: 2px solid #555; background: rgba(0,0,0,0.8); pointer-events: auto;}
-        .cam-btn { position: absolute; background: rgba(20,20,20,0.8); color: #777; border: 1px solid #555; cursor: pointer; font-size: 14px; width: 55px; height: 40px; text-align: center; transition: 0.1s;}
-        .cam-btn:hover, .cam-btn.active { background: #aaa; color: #000; font-weight: bold; border-color: white;}
+        /* ĐÃ SỬA: Layout Map chuẩn xác theo game gốc, cố định kích thước cứng */
+        #map { position: absolute; bottom: 80px; right: 40px; width: 280px; height: 320px; border: 2px solid #555; background: rgba(0,0,0,0.7); pointer-events: auto;}
+        .cam-btn { position: absolute; background: rgba(30,30,30,0.8); color: #888; border: 1px solid #666; cursor: pointer; font-size: 14px; width: 55px; height: 40px; text-align: center; transition: 0.1s; display: flex; justify-content: center; align-items: center;}
+        .cam-btn:hover, .cam-btn.active { background: #ddd; color: #000; font-weight: bold; border-color: white;}
         
-        #cam-1A { top: 5%; left: 40%; } #cam-1B { top: 25%; left: 40%; } #cam-5  { top: 25%; left: 10%; }
-        #cam-2A { top: 60%; left: 25%; } #cam-2B { top: 80%; left: 25%; } #cam-3  { top: 60%; left: 5%; }
-        #cam-4A { top: 60%; left: 60%; } #cam-4B { top: 80%; left: 60%; }
-        .you-are-here { position: absolute; bottom: -15px; left: 40%; width: 60px; height: 25px; background: #111; border: 2px solid #500; color: #a00; font-size: 10px; display: flex; justify-content: center; align-items: center; text-align: center;}
+        /* Tọa độ Pixel chuẩn xác cho Layout Map */
+        #cam-1A { top: 20px; left: 110px; } 
+        #cam-1B { top: 70px; left: 110px; } 
+        #cam-5  { top: 70px; left: 45px; } 
+        #cam-3  { top: 160px; left: 15px; } 
+        #cam-2A { top: 160px; left: 80px; } 
+        #cam-2B { top: 215px; left: 80px; } 
+        #cam-4A { top: 160px; left: 175px; } 
+        #cam-4B { top: 215px; left: 175px; } 
+        .you-are-here { position: absolute; bottom: 15px; left: 107px; width: 60px; height: 25px; background: #111; border: 2px solid #600; color: #d00; font-size: 11px; display: flex; justify-content: center; align-items: center; font-weight: bold;}
 
-        /* ĐÃ SỬA: Cải tiến Jumpscare Animation (Lao thẳng vào mặt) */
+        /* Jumpscare */
         #jumpscare, #game-over, #win-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 200; display: none; justify-content: center; align-items: center; font-size: 50px; flex-direction: column;}
-        
-        #jumpscare-icon {
-            display: inline-block;
-            filter: drop-shadow(0 0 50px red) contrast(150%);
-            /* Kết hợp zoom nhanh và lắc giật */
-            animation: jump-zoom 0.5s cubic-bezier(0.1, 0, 0, 1) forwards, fast-shake 0.05s infinite;
-        }
-
-        @keyframes jump-zoom {
-            0% { transform: scale(0.1) translateY(50px); opacity: 0; }
-            100% { transform: scale(5) translateY(0); opacity: 1; }
-        }
-
-        @keyframes fast-shake {
-            0%, 100% { margin-left: 0; margin-top: 0; }
-            25% { margin-left: 15px; margin-top: -15px; }
-            50% { margin-left: -15px; margin-top: 15px; }
-            75% { margin-left: 15px; margin-top: 15px; }
-        }
+        #jumpscare-icon { display: inline-block; filter: drop-shadow(0 0 50px red) contrast(150%); animation: jump-zoom 0.5s cubic-bezier(0.1, 0, 0, 1) forwards, fast-shake 0.05s infinite; }
+        @keyframes jump-zoom { 0% { transform: scale(0.1) translateY(50px); opacity: 0; } 100% { transform: scale(5) translateY(0); opacity: 1; } }
+        @keyframes fast-shake { 0%, 100% { margin-left: 0; margin-top: 0; } 25% { margin-left: 15px; margin-top: -15px; } 50% { margin-left: -15px; margin-top: 15px; } 75% { margin-left: 15px; margin-top: 15px; } }
     </style>
 </head>
 <body>
@@ -167,14 +157,14 @@
         </div>
         
         <div id="map">
-            <button class="cam-btn active" id="cam-1A" onclick="switchCam('1A', 'Show Stage')">1A</button>
-            <button class="cam-btn" id="cam-1B" onclick="switchCam('1B', 'Dining Area')">1B</button>
-            <button class="cam-btn" id="cam-5" onclick="switchCam('5', 'Backstage')">5</button>
-            <button class="cam-btn" id="cam-2A" onclick="switchCam('2A', 'West Hall')">2A</button>
-            <button class="cam-btn" id="cam-2B" onclick="switchCam('2B', 'W. Hall Corner')">2B</button>
-            <button class="cam-btn" id="cam-3" onclick="switchCam('3', 'Supply Closet')">3</button>
-            <button class="cam-btn" id="cam-4A" onclick="switchCam('4A', 'East Hall')">4A</button>
-            <button class="cam-btn" id="cam-4B" onclick="switchCam('4B', 'E. Hall Corner')">4B</button>
+            <div class="cam-btn active" id="cam-1A" onclick="switchCam('1A', 'Show Stage')">1A</div>
+            <div class="cam-btn" id="cam-1B" onclick="switchCam('1B', 'Dining Area')">1B</div>
+            <div class="cam-btn" id="cam-5" onclick="switchCam('5', 'Backstage')">5</div>
+            <div class="cam-btn" id="cam-2A" onclick="switchCam('2A', 'West Hall')">2A</div>
+            <div class="cam-btn" id="cam-2B" onclick="switchCam('2B', 'W. Hall Corner')">2B</div>
+            <div class="cam-btn" id="cam-3" onclick="switchCam('3', 'Supply Closet')">3</div>
+            <div class="cam-btn" id="cam-4A" onclick="switchCam('4A', 'East Hall')">4A</div>
+            <div class="cam-btn" id="cam-4B" onclick="switchCam('4B', 'E. Hall Corner')">4B</div>
             <div class="you-are-here">OFFICE</div>
         </div>
     </div>
@@ -266,7 +256,6 @@
     const office = document.getElementById('office');
     let officeX = -30; 
     document.addEventListener('mousemove', (e) => {
-        // Chỉ pan khi con trỏ KHÔNG nằm trên vùng UI (nút cam-toggle)
         if(state.isCamOpen || !state.gameActive || state.isPowerOut || e.target.id === 'cam-toggle') return;
         
         const mouseX = e.clientX; const width = window.innerWidth; const panSpeed = 1.5;
@@ -327,7 +316,6 @@
         playSound('click');
         state.isCamOpen = !state.isCamOpen;
         document.getElementById('camera-system').style.display = state.isCamOpen ? 'block' : 'none';
-        // Đổi chữ trên nút Monitor
         document.getElementById('cam-toggle').innerText = state.isCamOpen ? "Đóng Monitor" : "Mở Monitor";
         updateUsageDisplay(); updateCamVisuals();
     }
@@ -379,12 +367,10 @@
         
         document.getElementById('camera-system').style.display = 'none';
         
-        // Hiện jumpscare và reset animation
         const jumpScreen = document.getElementById('jumpscare');
         const jumpIcon = document.getElementById('jumpscare-icon');
         jumpIcon.innerText = icon;
         
-        // Force reflow để đảm bảo animation chạy lại mượt mà
         jumpScreen.style.display = 'none';
         void jumpScreen.offsetWidth; 
         jumpScreen.style.display = 'flex';
@@ -392,7 +378,7 @@
         setTimeout(() => {
             jumpScreen.style.display = 'none';
             document.getElementById('game-over').style.display = 'flex';
-        }, 1500); // 1.5 giây nhảy mặt
+        }, 1500); 
     }
 
     function gameTimerLoop() {
@@ -420,7 +406,7 @@
     function triggerPowerOut() {
         state.isPowerOut = true; state.isCamOpen = false;
         document.getElementById('camera-system').style.display = 'none';
-        document.getElementById('cam-toggle').style.display = 'none'; // Giấu nút monitor
+        document.getElementById('cam-toggle').style.display = 'none';
         playSound('door'); 
         
         ['left', 'right'].forEach(side => {

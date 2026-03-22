@@ -752,7 +752,7 @@ let officeX = -30;
 document.addEventListener('mousemove', e => {
     if (gameState.isCamOpen || !gameState.gameActive || gameState.isPowerOut) return;
     const pct = e.clientX / window.innerWidth;
-    officeX = -15 - (pct * 30);
+    officeX = -(pct * 60);
     DOM.office.style.transform = `translateX(${officeX}vw)`;
 });
 
@@ -807,6 +807,29 @@ function updateDoorVisuals(side) {
 
     const atDoor = AI_LIST.some(a => a.side === side && a.position === 0);
     ai.classList.toggle('is-here', atDoor);
+
+    // Show bonnie-scary.png for Bonnie at left door
+    if (side === 'left') {
+        const bonnieAtDoor = AI_LIST.find(a => a.name === 'Bonnie' && a.position === 0);
+        if (bonnieAtDoor) {
+            ai.innerHTML = '<img src="bonnie-scary.png" alt="Bonnie" style="width:100%;height:100%;object-fit:contain;">';
+        } else {
+            ai.innerHTML = '';
+        }
+    }
+
+    // Show Chica at right door 
+    if (side === 'right') {
+        const chicaAtDoor = AI_LIST.find(a => a.name === 'Chica' && a.position === 0);
+        const freddyAtDoor = AI_LIST.find(a => a.name === 'Freddy' && a.position === 0);
+        if (chicaAtDoor) {
+            ai.innerText = '🐔';
+        } else if (freddyAtDoor) {
+            ai.innerText = '🐻';
+        } else {
+            ai.innerText = '';
+        }
+    }
 
     updateWindowCharacter();
 }
@@ -1127,7 +1150,11 @@ function triggerJumpscare(icon) {
 
         playSound('jumpscare');
         document.body.classList.add('shaking');
-        DOM.jumpscareIcon.innerText = icon;
+        if (icon === '🐰') {
+            DOM.jumpscareIcon.innerHTML = '<img src="bonnie-scary.png" alt="Bonnie" style="max-height:80vh;filter:drop-shadow(0 0 50px red) contrast(150%) brightness(1.2);">';
+        } else {
+            DOM.jumpscareIcon.innerText = icon;
+        }
         DOM.jumpscare.style.display = 'none';
         void DOM.jumpscare.offsetWidth;
         DOM.jumpscare.style.display = 'flex';

@@ -621,8 +621,7 @@ body, html {
     left: 50%;
     transform: translateX(-50%);
     width: 70%;
-    max-height: 95%;
-    object-fit: contain;
+    height: 95%;
     opacity: 0;
     z-index: 2;
     filter: brightness(0) contrast(1.2);
@@ -630,6 +629,16 @@ body, html {
     pointer-events: none;
     font-size: 100px;
     text-align: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.animatronic-door img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom;
 }
 
 /* Animatronic is at the door — but still invisible without light */
@@ -737,8 +746,8 @@ body, html {
     box-shadow: 5px 5px 15px rgba(0,0,0,.9);
 }
 
-.left-panel  { left: 26vw; }
-.right-panel { right: 26vw; }
+.left-panel  { left: 24vw; }
+.right-panel { right: 24vw; }
 
 .btn {
     width: 45px; height: 45px;
